@@ -9,6 +9,7 @@ import Welcome from './routes/Welcome';
 import Login from './routes/Login';
 import SignUp from './routes/SignUp';
 import VerifyEmail from './routes/VerifyEmail';
+import Profile from './routes/Profile';
 
 export default function App() {
   const navigate = useNavigate();
@@ -19,7 +20,6 @@ export default function App() {
     const { data: {session}, error } = await supabase.auth.getSession();
 
     if (session) {
-      console.log(session);
       const expiresAt = session.expires_at * 1000;
       if (expiresAt > Date.now()) return true;
     }
@@ -47,15 +47,25 @@ export default function App() {
   return (
     <>
       <Routes>
+        {/* Routes that auto navigate to welcome when session is invalid */}
         <Route
           path='/'
           element={isSessionValid ? <Home navigate={navigate} checkValidSession={checkValidSession} isSessionValid={isSessionValid} setIsSessionValid={setIsSessionValid}/> : <Navigate to="/welcome" />}
         >
         </Route>
-        <Route path='/welcome' element={<Welcome navigate={navigate}/>}/>
+        <Route
+          path='/profile'
+          element={isSessionValid ? <Profile navigate={navigate} checkValidSession={checkValidSession} isSessionValid={isSessionValid} setIsSessionValid={setIsSessionValid}/> : <Navigate to="/welcome" />}
+        >
+        </Route>
+
+        {/* Routes that auto navigate to home when session is valid */}
+        <Route
+          path='/welcome'
+          element={isSessionValid ? <Navigate to="/" /> :  <Welcome navigate={navigate}/>}/>
         <Route path='/login' element={isSessionValid ? <Navigate to="/" /> : <Login navigate={navigate} setIsSessionValid={setIsSessionValid}/>} />
-        <Route path='/signup' element={<SignUp navigate={navigate}/>}/>
-        <Route path='/signup/verify' element={<VerifyEmail />}/>
+        <Route path='/signup' element={isSessionValid ? <Navigate to="/" /> :  <SignUp navigate={navigate}/>}/>
+        <Route path='/signup/verify' element={isSessionValid ? <Navigate to="/" /> :  <VerifyEmail />}/>
       </Routes>
     </>
   )

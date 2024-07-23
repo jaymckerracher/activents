@@ -48,22 +48,6 @@ export default function SignUp ({navigate}) {
 
         setFormError('');
 
-        // add the user to the profiles table
-        // const { error: signUpProfileError } = await supabase
-        // .from('profiles')
-        // .insert({
-        //     first_name: firstName,
-        //     last_name: lastName,
-        //     role: 'user',
-        // })
-
-        // if (signUpProfileError) {
-        //     setIsLoading(false);
-        //     setFormError(`There has been an error: ${signUpProfileError}`);
-        // }
-
-        // setFormError('');
-
         // navigate to the home page after the user has been signed in
         navigate('/signup/verify', { replace: true });
     };
