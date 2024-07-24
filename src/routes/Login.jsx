@@ -31,7 +31,20 @@ export default function Login ({navigate, setIsSessionValid}) {
         setIsLoading(false);
 
         navigate('/', { replace: true });
-    }
+    };
+
+    // handle google button click
+    async function handleGoogleClick() {
+        const { error } = await supabase.auth.signInWithOAuth({
+            provider: 'google',
+        });
+
+        if (error) {
+            setFormError(`There was an error: ${error}`);
+        };
+
+        setFormError('');
+    };
 
     useEffect(() => {
         const currentEmail = document.getElementById('email');
@@ -59,6 +72,9 @@ export default function Login ({navigate, setIsSessionValid}) {
 
                 <button disabled={!isSubmitActive}>Log in</button>
             </form>
+            
+            <div>OR</div>
+            <button onClick={handleGoogleClick}>Sign in with Google</button>
             {isLoading && <p>Loading...</p>}
             {formError && <p>{`There was an error logging in: ${formError}`}</p>}
             <p>Don't have an account? Sign up <Link to={'/signup'}>here</Link></p>

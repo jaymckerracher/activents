@@ -7,7 +7,7 @@ export default function Home({navigate, checkValidSession, isSessionValid, setIs
 
   useEffect(() => {
     async function assignSessionBool () {
-      setIsSessionValid(await checkValidSession());
+      await setIsSessionValid(await checkValidSession());
       if (!isSessionValid) navigate('/welcome', { replace: true } );
     };
     assignSessionBool();
