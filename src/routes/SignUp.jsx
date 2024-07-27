@@ -52,6 +52,19 @@ export default function SignUp ({navigate}) {
         navigate('/signup/verify', { replace: true });
     };
 
+    // handle google button click
+    async function handleGoogleClick() {
+        const { error } = await supabase.auth.signInWithOAuth({
+            provider: 'google',
+        });
+
+        if (error) {
+            setFormError(`There was an error: ${error}`);
+        };
+
+        setFormError('');
+    };
+
     function handleNameChange (e) {
         const name = e.target.value;
 
@@ -156,6 +169,10 @@ export default function SignUp ({navigate}) {
 
                 <button disabled={!isSubmitActive}>Sign Up</button>
             </form>
+
+            <div>OR</div>
+            <button onClick={handleGoogleClick}>Sign in with Google</button>
+
             {formError && <p>{formError}</p>}
             {isLoading && <p>Loading...</p>}
         </div>
