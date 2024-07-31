@@ -6,7 +6,6 @@ import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 
 export default function Profile({navigate, checkValidSession, isSessionValid, setIsSessionValid}) {
     const [isLoading, setIsLoading] = useState(false);
-    const [userInfoReceived, setUserInfoReceived] = useState(null);
     const [userInfoError, setUserInfoError] = useState('');
     const [userObject, setUserObject] = useState();
     const [profileObject, setProfileObject] = useState();
@@ -26,42 +25,15 @@ export default function Profile({navigate, checkValidSession, isSessionValid, se
         navigate('/', { replace: true });
     };
 
-    async function appointUserInfo() {
-        const { data: { user }, error } = await supabase.auth.getUser()
-
-        if (error) {
-            setIsUserInfoReceived(false);
-            setUserInfoError(`There was an error loading your information, please refresh your page: ${error}`);
-            return;
-        };
-
-        setUserInfoError('');
-        setLinkedWithGoogle(user.identities.some(identity => identity.provider === 'google'));
-        setUserObject(user);
-        
-        const {data: profile, error: profileError} = await supabase
-        .from('profiles')
-        .select()
-        .eq('id', user.id);
-        
-        if (profileError) {
-            setIsUserInfoReceived(false);
-            setUserInfoError(`There was an error loading your information, please refresh your page: ${profileError}`);
-            return;
-        }
-
-        console.log(profile, 'this is the profile')
-
-        setProfileObject(profile);
-        
-        setUserInfoError('');
-        
-        setUserInfoReceived(true);
-    };
-
     async function handleGoogleClick() {
         const { error } = await supabase.auth.signInWithOAuth({
             provider: 'google',
+            options: {
+                scopes: 'https://www.googleapis.com/auth/calendar',
+                queryParams: {
+                    prompt: 'login',
+                }
+            },
         });
 
         if (error) {
@@ -76,11 +48,36 @@ export default function Profile({navigate, checkValidSession, isSessionValid, se
             await setIsSessionValid(await checkValidSession());
             if (!isSessionValid) navigate('/welcome', { replace: true } );
         };
-        assignSessionBool();
+        async function appointUserInfo() {
+            const { data: { user }, error } = await supabase.auth.getUser()
+
+            if (error) {
+                setUserInfoError(`There was an error loading your information, please refresh your page: ${error}`);
+                return;
+            };
+
+            setUserInfoError('');
+            setLinkedWithGoogle(user.identities.some(identity => identity.provider === 'google'));
+            setUserObject(user);
+            
+            const {data, error: profileError} = await supabase
+            .from('profiles')
+            .select()
+            .eq('id', user.id);
+            
+            if (profileError) {
+                setUserInfoError(`There was an error loading your information, please refresh your page: ${profileError}`);
+                return;
+            }
+
+            setProfileObject(data[0]);
+            setUserInfoError('');
+        };
         appointUserInfo();
+        assignSessionBool();
     }, []);
 
-    if (isSessionValid === null || userInfoReceived === null) {
+    if (isSessionValid === null || !userObject || !profileObject) {
         return <p>Loading...</p>
     }
 
@@ -93,10 +90,10 @@ export default function Profile({navigate, checkValidSession, isSessionValid, se
             <Navigation />
 
             <h2>Profile Information</h2>
-            <p>Forename: {userObject.user_metadata.first_name}</p><FontAwesomeIcon icon={faPenToSquare} />
-            <p>Surname: {userObject.user_metadata.last_name}</p><FontAwesomeIcon icon={faPenToSquare} />
+            <p>Forename: {profileObject.first_name}</p><FontAwesomeIcon icon={faPenToSquare} />
+            <p>Surname: {profileObject.last_name}</p><FontAwesomeIcon icon={faPenToSquare} />
             <p>Email: {userObject.email}</p><FontAwesomeIcon icon={faPenToSquare} />
-            <p>Role: {profileObject[0].role}</p>
+            <p>Role: {profileObject.role}</p>
             
             <h2>Account Actions</h2>
             {!linkedWithGoogle && <button onClick={handleGoogleClick}>Link with Google</button>}

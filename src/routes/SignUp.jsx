@@ -56,6 +56,12 @@ export default function SignUp ({navigate}) {
     async function handleGoogleClick() {
         const { error } = await supabase.auth.signInWithOAuth({
             provider: 'google',
+            options: {
+                scopes: 'https://www.googleapis.com/auth/calendar',
+                queryParams: {
+                    prompt: 'login',
+                }
+            },
         });
 
         if (error) {

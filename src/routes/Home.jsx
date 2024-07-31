@@ -2,9 +2,16 @@ import supabase from "../supabase";
 import { useEffect, useState } from "react";
 import Navigation from "../components/Navigation";
 import EventCard from "../components/EventCard";
+import { AuthInvalidCredentialsError } from "@supabase/supabase-js";
 
 export default function Home({navigate, checkValidSession, isSessionValid, setIsSessionValid}) {
   const [currentUser, setCurrentUser] = useState();
+  const [currentProfile, setCurrentProfile] = useState();
+  const [currentSession, setCurrentSession] = useState();
+  const [linkedWithGoogle, setLinkedWithGoogle] = useState();
+  const [userBookings, setUserBookings] = useState();
+  const [userBookingsEvents, setUserBookingsEvents] = useState();
+
   const [errorMessage, setErrorMessage] = useState('');
   const [eventData, setEventData] = useState();
   const [loading, setLoading] = useState(false);
@@ -12,42 +19,75 @@ export default function Home({navigate, checkValidSession, isSessionValid, setIs
   // filter states
   const [filterTopic, setFilterTopic] = useState('');
   const [filterArg, setFilterArg] = useState([]);
-
+  
+  // filter arg arrays
+  const [sportsArr, setSportsArr] = useState();
+  const [locationArr, setLocationArr] = useState();
+  
   // sort states
   const [sortTopic, setSortTopic] = useState('created_at');
   const [sortDirectionLabelOptions, setSortDirectionLabelOptions] = useState(['Newest post', 'Oldest post']);
   const [sortAscending, setSortAscending] = useState(false);
-
-  // filter arg arrays
-  const [sportsArr, setSportsArr] = useState();
-  const [locationArr, setLocationArr] = useState();
-
-  // check the session exists and get the user info
+  
+  // check session, get user info and all events
   useEffect(() => {
     async function assignSessionBool () {
       await setIsSessionValid(await checkValidSession());
       if (!isSessionValid) navigate('/welcome', { replace: true } );
     };
 
-    async function getUser() {
+    async function getUserProfileBookings() {
       // get the user first
-      const {data: { user }, error} = await supabase.auth.getUser();
+      const {data: { user }, error: authError} = await supabase.auth.getUser();
 
-      if (error) {
+      if (authError) {
         setErrorMessage('There was an error loading your user details, please try again.');
         return;
       }
 
       setErrorMessage('');
+      setLinkedWithGoogle(user.identities.some(identity => identity.provider === 'google'));
       setCurrentUser(user);
+
+      const {data, error: profileError} = await supabase
+      .from('profiles')
+      .select()
+      .eq('id', user.id)
+
+      if (profileError) {
+        setErrorMessage('There was an error loading your profile details, please try again.');
+        return;
+      };
+
+      setErrorMessage('');
+      setCurrentProfile(data[0]);
+
+      const { data: bookings, error: bookingsError } = await supabase
+      .from('bookings')
+      .select()
+      .eq('user_id', user.id);
+
+      if (bookingsError) {
+          setErrorMessage(`There was an error retrieving your bookings ${bookingsError}`);
+          return;
+      };
+
+      // set the booking events array
+      const bookingsArr = [];
+      bookings.forEach(booking => {
+        bookingsArr.push(booking.event_id)
+      });
+      setUserBookingsEvents(bookingsArr);
+
+      setErrorMessage('');
+      setUserBookings(bookings);
+    };
+
+    async function getSession() {
+      const session = await supabase.auth.getSession();
+      setCurrentSession(session.data.session);
     }
 
-    assignSessionBool();
-    getUser();
-  }, []);
-
-  // get the events and set the filter options
-  useEffect(() => {
     async function getAllEvents() {
       const {data, error} = await supabase
       .from('events')
@@ -80,6 +120,10 @@ export default function Home({navigate, checkValidSession, isSessionValid, setIs
       setEventData(data);
     }
 
+
+    assignSessionBool();
+    getUserProfileBookings();
+    getSession();
     getAllEvents();
   }, []);
 
@@ -124,23 +168,27 @@ export default function Home({navigate, checkValidSession, isSessionValid, setIs
   
   // handle update for string filter arguments
   async function handleUpdateResults(topic, arg, sortTopic, ascendingBool) {
-      const {data, error} = await supabase
-      .from('events')
-      .select()
-      .eq(topic, arg)
-      .order(sortTopic , { ascending: ascendingBool })
+    setLoading(true);
+    const {data, error} = await supabase
+    .from('events')
+    .select()
+    .eq(topic, arg)
+    .order(sortTopic , { ascending: ascendingBool })
 
-      if (error) {
-        setErrorMessage(`There was an issue updating the results, please try again: ${error}`);
-        return;
-      }
+    if (error) {
+      setErrorMessage(`There was an issue updating the results, please try again: ${error}`);
+      setLoading(false);
+      return;
+    }
 
-      setErrorMessage('');
-      setEventData(data);
+    setErrorMessage('');
+    setEventData(data);
+    setLoading(false);
   }
 
   // handle update when no filter desired
   async function handleUpdateForNoFilter(sortTopic, ascendingBool) {
+    setLoading(true);
     const {data, error} = await supabase
     .from('events')
     .select()
@@ -148,14 +196,16 @@ export default function Home({navigate, checkValidSession, isSessionValid, setIs
 
     if (error) {
       setErrorMessage('There was an error recieving the events, please try again.');
+      setLoading(false);
       return;
     }
 
     setErrorMessage('');
     setEventData(data);
+    setLoading(false);
   }
 
-  if (isSessionValid === null || !currentUser || !eventData) {
+  if (isSessionValid === null || !currentUser || !currentProfile || !currentSession || !userBookings || !userBookingsEvents || !eventData) {
     return (
       <p>Loading...</p>
     )
@@ -320,9 +370,15 @@ export default function Home({navigate, checkValidSession, isSessionValid, setIs
       {/* update results button */}
       <button onClick={() => {
         if (!filterTopic) handleUpdateForNoFilter(sortTopic, sortAscending);
-        else if (Array.isArray(filterArg)) handleUpdateResultsNum(filterTopic, filterArg);
-        else handleUpdateResults(filterTopic, filterArg);
+        else if (Array.isArray(filterArg)) handleUpdateResultsNum(filterTopic, filterArg, sortTopic, sortAscending);
+        else handleUpdateResults(filterTopic, filterArg, sortTopic, sortAscending);
       }}>Update Results</button>
+
+      {/* if staff or admin: add event button */}
+      {
+        currentProfile.role === 'staff' || currentProfile.role === 'admin' &&
+        <button onClick={() => navigate('/addevent')}>Add Event</button>
+      }
 
       <div>
         {loading && <p>Loading events...</p>}
@@ -331,7 +387,7 @@ export default function Home({navigate, checkValidSession, isSessionValid, setIs
           eventData.length > 0 &&
           <div>
             {eventData.map(event => {
-              return <EventCard key={event.id} event={event} />
+              return <EventCard key={event.id} event={event} currentUser={currentUser} currentProfile={currentProfile} userBookings={userBookings} userBookingsEvents={userBookingsEvents} currentSession={currentSession} linkedWithGoogle={linkedWithGoogle} />
             })}
           </div>
         }

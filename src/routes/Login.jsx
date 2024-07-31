@@ -37,7 +37,10 @@ export default function Login ({navigate, setIsSessionValid}) {
     async function handleGoogleClick() {
         const { error } = await supabase.auth.signInWithOAuth({
             provider: 'google',
-        });
+            options: {
+                scopes: 'https://www.googleapis.com/auth/calendar',
+            },
+        })
 
         if (error) {
             setFormError(`There was an error: ${error}`);
@@ -72,7 +75,7 @@ export default function Login ({navigate, setIsSessionValid}) {
 
                 <button disabled={!isSubmitActive}>Log in</button>
             </form>
-            
+
             <div>OR</div>
             <button onClick={handleGoogleClick}>Sign in with Google</button>
             {isLoading && <p>Loading...</p>}

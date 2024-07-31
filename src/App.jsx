@@ -10,6 +10,7 @@ import Login from './routes/Login';
 import SignUp from './routes/SignUp';
 import VerifyEmail from './routes/VerifyEmail';
 import Profile from './routes/Profile';
+import AddEvent from './routes/AddEvent';
 
 export default function App() {
   const navigate = useNavigate();
@@ -47,22 +48,27 @@ export default function App() {
   return (
     <>
       <Routes>
-        {/* Routes that auto navigate to welcome when session is invalid */}
+        {/* Routes that require an active session */}
         <Route
           path='/'
           element={isSessionValid ? <Home navigate={navigate} checkValidSession={checkValidSession} isSessionValid={isSessionValid} setIsSessionValid={setIsSessionValid}/> : <Navigate to="/welcome" />}
         >
         </Route>
+
         <Route
           path='/profile'
           element={isSessionValid ? <Profile navigate={navigate} checkValidSession={checkValidSession} isSessionValid={isSessionValid} setIsSessionValid={setIsSessionValid}/> : <Navigate to="/welcome" />}
         >
         </Route>
 
-        {/* Routes that auto navigate to home when session is valid */}
         <Route
-          path='/welcome'
-          element={isSessionValid ? <Navigate to="/" /> :  <Welcome navigate={navigate}/>}/>
+          path='/addevent'
+          element={isSessionValid ? <AddEvent navigate={navigate} checkValidSession={checkValidSession} isSessionValid={isSessionValid} setIsSessionValid={setIsSessionValid}/> : <Navigate to="/welcome" />}
+        >
+        </Route>
+
+        {/* Routes that dont require active session */}
+        <Route path='/welcome' element={isSessionValid ? <Navigate to="/" /> :  <Welcome navigate={navigate}/>}/>
         <Route path='/login' element={isSessionValid ? <Navigate to="/" /> : <Login navigate={navigate} setIsSessionValid={setIsSessionValid}/>} />
         <Route path='/signup' element={isSessionValid ? <Navigate to="/" /> :  <SignUp navigate={navigate}/>}/>
         <Route path='/signup/verify' element={isSessionValid ? <Navigate to="/" /> :  <VerifyEmail />}/>
