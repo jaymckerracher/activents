@@ -3,15 +3,16 @@ import defaultEventImg from '../assets/defaultEventImg.jpg'
 import supabase from '../supabase'
 
 const googleApiKey = import.meta.env.VITE_GOOGLE_API_KEY;
-const googleClientID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-const googleRedirectURL = import.meta.env.VITE_GOOGLE_REDIRECT_URL
-const redirectURL = import.meta.env.VITE_REDIRECT_URL;
 
 export default function EventCard({event, currentUser, currentProfile, userBookings, userBookingsEvents, currentSession, linkedWithGoogle}) {
     const [host, setHost] = useState();
     const [errorMessage, setErrorMessage] = useState('');
     const [buttonSignUp, setButtonSignUp] = useState(!userBookingsEvents.includes(event.id));
-    const [loading, setLoading] = useState(false);
+    const [signUpLoading, setSignUpLoading] = useState(false);
+    const [calendarLoading, setCalendarLoading] = useState(false);
+    const [gapiLoaded, setGapiLoaded] = useState(false);
+    const [eventInCalendar, setEventInCalendar] = useState();
+    const [calendarID, setCalendarID] = useState();
 
     useEffect(() => {
         async function getHostInformation() {
@@ -29,8 +30,37 @@ export default function EventCard({event, currentUser, currentProfile, userBooki
             setHost(data[0]);
         };
 
+        function initializeGapi() {
+            if (linkedWithGoogle) {
+                gapi.load('client', async () => {
+                    await gapi.client.init({
+                        apiKey: googleApiKey,
+                        discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"],
+                    });
+
+                    await gapi.auth.setToken({ access_token: currentSession.provider_token });
+                    setGapiLoaded(true);
+
+                    // if event in calendar, dont display the button
+                    const response = await gapi.client.calendar.events.list({
+                        calendarId: 'primary',
+                        q: event.title,
+                        timeMin: event.event_start.slice(0, event.event_start.length - 3),
+                        timeMax: event.event_end.slice(0, event.event_end.length - 3),
+                        singleEvents: true
+                    });
+
+                    if (response.result.items.length) {
+                        setCalendarID(response.result.items[0].id);
+                        setEventInCalendar(true);
+                    }
+                });
+            }
+        }
+
         getHostInformation();
-    }, []);
+        initializeGapi();
+    }, [eventInCalendar]);
 
     function getCurrentTimestamp() {
         const now = new Date();
@@ -60,7 +90,7 @@ export default function EventCard({event, currentUser, currentProfile, userBooki
             // handle free sign up
             if (event.price === 0) {
                 // adds the booking to the bookings table
-                setLoading(true);
+                setSignUpLoading(true);
                 const { error } = await supabase
                 .from('bookings')
                 .insert({
@@ -75,7 +105,7 @@ export default function EventCard({event, currentUser, currentProfile, userBooki
                 }
 
                 setButtonSignUp(false);
-                setLoading(false);
+                setSignUpLoading(false);
             }
 
             // handle paid sign up
@@ -84,7 +114,7 @@ export default function EventCard({event, currentUser, currentProfile, userBooki
         // handle cancel booking
         else if (!buttonSignUp) {
             // delete the booking from the table
-            setLoading(true);
+            setSignUpLoading(true);
 
             const { error } = await supabase
             .from('bookings')
@@ -97,54 +127,54 @@ export default function EventCard({event, currentUser, currentProfile, userBooki
             }
 
             // make sure the event is removed from their calendar
+            if (eventInCalendar) {
+                await gapi.client.calendar.events.delete({
+                    calendarId: 'primary',
+                    eventId: calendarID,
+                });
+                setEventInCalendar(false);
+            }
+
             // make sure any money is returned
             setButtonSignUp(true);
-            setLoading(false);
+            setSignUpLoading(false);
         }
     }
 
     async function handleAddToCalendar() {
-        // add the event to the calendar
-        gapi.load('client', async () => {
-            await gapi.client.init({
-                apiKey: googleApiKey,
-                discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"],
-                scope: 'https://www.googleapis.com/auth/calendar',
-            });
+        setCalendarLoading(true);
 
-            gapi.auth.setToken({ access_token: currentSession.provider_token });
+        const newEvent = {
+            'summary': event.title,
+            'description': event.description,
+            'start': {
+                'dateTime': event.event_start.slice(0, event.event_start.length - 3),
+                'timeZone': 'Europe/London',
+            },
+            'end': {
+                'dateTime': event.event_end.slice(0, event.event_end.length - 3),
+                'timeZone': 'Europe/London',
+            },
+            'location': event.location,
+            'reminders': {
+                'useDefault': true,
+            },
+        }
 
-            const newEvent = {
-                'summary': event.title,
-                'description': event.description,
-                'start': {
-                    'dateTime': event.event_start.slice(0, event.event_start.length - 3),
-                    'timeZone': 'Europe/London',
-                },
-                'end': {
-                    'dateTime': event.event_end.slice(0, event.event_end.length - 3),
-                    'timeZone': 'Europe/London',
-                },
-                'location': event.location,
-                'reminders': {
-                    'useDefault': true,
-                },
-            }
-
-            const response = await gapi.client.calendar.events.insert({
-                'calendarId': 'primary',
-                'resource': newEvent
-            })
-
-            console.log(response, 'this is the response');
+        await gapi.client.calendar.events.insert({
+            'calendarId': 'primary',
+            'resource': newEvent
         })
+
+        setEventInCalendar(true);
+        setCalendarLoading(false);
     };
 
     if (errorMessage) {
         return <p>{errorMessage}</p>
     }
 
-    else if (!host) {
+    else if (!host || eventInCalendar === null) {
         return <p>Loading event...</p>
     }
 
@@ -162,9 +192,9 @@ export default function EventCard({event, currentUser, currentProfile, userBooki
             <p>{event.available_spaces} spaces remaining</p>
 
             {/* calls to action */}
-            {currentProfile.role === 'user' && <button onClick={handleSignUpButton}>
+            {currentProfile.role === 'user' && <button onClick={handleSignUpButton} disabled={calendarLoading || signUpLoading}>
                 {
-                    loading
+                    signUpLoading
                     ?
                     'Loading...'
                     :
@@ -175,7 +205,19 @@ export default function EventCard({event, currentUser, currentProfile, userBooki
                     'Cancel booking'
                 }
             </button>}
-            {!buttonSignUp && currentProfile.role === 'user' && linkedWithGoogle && <button onClick={handleAddToCalendar}>Add to google calendar</button>}
+            {
+                !buttonSignUp &&
+                currentProfile.role === 'user' &&
+                linkedWithGoogle && gapiLoaded &&
+                !eventInCalendar &&
+                <button onClick={handleAddToCalendar} disabled={calendarLoading}>{
+                    calendarLoading
+                    ?
+                    'Loading...'
+                    :
+                    'Add to google calendar'
+                }</button>
+            }
             {((currentProfile.role === 'staff' && currentProfile.id === event.host_id) || currentProfile.role === 'admin') && <button>Edit event</button>}
             {((currentProfile.role === 'staff' && currentProfile.id === event.host_id) || currentProfile.role === 'admin') && <button>Delete event</button>}
         </div>

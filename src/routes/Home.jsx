@@ -5,6 +5,7 @@ import EventCard from "../components/EventCard";
 import { AuthInvalidCredentialsError } from "@supabase/supabase-js";
 
 export default function Home({navigate, checkValidSession, isSessionValid, setIsSessionValid}) {
+  const [checkBeenComplete, setCheckBeenComplete] = useState(false);
   const [currentUser, setCurrentUser] = useState();
   const [currentProfile, setCurrentProfile] = useState();
   const [currentSession, setCurrentSession] = useState();
@@ -33,7 +34,11 @@ export default function Home({navigate, checkValidSession, isSessionValid, setIs
   useEffect(() => {
     async function assignSessionBool () {
       await setIsSessionValid(await checkValidSession());
-      if (!isSessionValid) navigate('/welcome', { replace: true } );
+      setCheckBeenComplete(true);
+      if (!isSessionValid) {
+        await supabase.auth.signOut();
+        navigate('/welcome', { replace: true } );
+      };
     };
 
     async function getUserProfileBookings() {
@@ -205,7 +210,7 @@ export default function Home({navigate, checkValidSession, isSessionValid, setIs
     setLoading(false);
   }
 
-  if (isSessionValid === null || !currentUser || !currentProfile || !currentSession || !userBookings || !userBookingsEvents || !eventData) {
+  if (isSessionValid === null || !checkBeenComplete || !currentUser || !currentProfile || !currentSession || !userBookings || !userBookingsEvents || !eventData) {
     return (
       <p>Loading...</p>
     )
