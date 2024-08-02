@@ -2,6 +2,8 @@
 import { useEffect, useState } from 'react';
 import {Routes, Route, Navigate, useNavigate} from 'react-router-dom';
 import supabase from './supabase';
+import { ToastContainer, toast, Bounce } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 // importing the pages
 import Home from './routes/Home';
@@ -69,10 +71,11 @@ export default function App() {
 
         {/* Routes that dont require active session */}
         <Route path='/welcome' element={isSessionValid ? <Navigate to="/" /> :  <Welcome navigate={navigate}/>}/>
-        <Route path='/login' element={isSessionValid ? <Navigate to="/" /> : <Login navigate={navigate} setIsSessionValid={setIsSessionValid}/>} />
-        <Route path='/signup' element={isSessionValid ? <Navigate to="/" /> :  <SignUp navigate={navigate}/>}/>
+        <Route path='/login' element={isSessionValid ? <Navigate to="/" /> : <Login navigate={navigate} setIsSessionValid={setIsSessionValid} toast={toast} Bounce={Bounce}/>} />
+        <Route path='/signup' element={isSessionValid ? <Navigate to="/" /> :  <SignUp navigate={navigate} toast={toast} Bounce={Bounce}/>}/>
         <Route path='/signup/verify' element={isSessionValid ? <Navigate to="/" /> :  <VerifyEmail />}/>
       </Routes>
+      <ToastContainer />
     </>
   )
 }

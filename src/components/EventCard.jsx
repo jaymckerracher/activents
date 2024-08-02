@@ -42,17 +42,21 @@ export default function EventCard({event, currentUser, currentProfile, userBooki
                     setGapiLoaded(true);
 
                     // if event in calendar, dont display the button
-                    const response = await gapi.client.calendar.events.list({
-                        calendarId: 'primary',
-                        q: event.title,
-                        timeMin: event.event_start.slice(0, event.event_start.length - 3),
-                        timeMax: event.event_end.slice(0, event.event_end.length - 3),
-                        singleEvents: true
-                    });
-
-                    if (response.result.items.length) {
-                        setCalendarID(response.result.items[0].id);
-                        setEventInCalendar(true);
+                    try {
+                        const response = await gapi.client.calendar.events.list({
+                            calendarId: 'primary',
+                            q: event.title,
+                            timeMin: event.event_start.slice(0, event.event_start.length - 3),
+                            timeMax: event.event_end.slice(0, event.event_end.length - 3),
+                            singleEvents: true
+                        });
+    
+                        if (response.result.items.length) {
+                            setCalendarID(response.result.items[0].id);
+                            setEventInCalendar(true);
+                        }
+                    } catch (error) {
+                        setEventInCalendar(false);
                     }
                 });
             }
@@ -210,13 +214,15 @@ export default function EventCard({event, currentUser, currentProfile, userBooki
                 currentProfile.role === 'user' &&
                 linkedWithGoogle && gapiLoaded &&
                 !eventInCalendar &&
-                <button onClick={handleAddToCalendar} disabled={calendarLoading}>{
-                    calendarLoading
-                    ?
-                    'Loading...'
-                    :
-                    'Add to google calendar'
-                }</button>
+                <button onClick={handleAddToCalendar} disabled={calendarLoading}>
+                    {
+                        calendarLoading
+                        ?
+                        'Loading...'
+                        :
+                        'Add to google calendar'
+                    }
+                </button>
             }
             {((currentProfile.role === 'staff' && currentProfile.id === event.host_id) || currentProfile.role === 'admin') && <button>Edit event</button>}
             {((currentProfile.role === 'staff' && currentProfile.id === event.host_id) || currentProfile.role === 'admin') && <button>Delete event</button>}

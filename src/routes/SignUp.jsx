@@ -1,11 +1,17 @@
 import { useEffect, useState } from "react";
 import supabase from "../supabase";
+import { Link } from "react-router-dom";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash, faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { Bounce } from "react-toastify";
 
-export default function SignUp ({navigate}) {
+export default function SignUp ({navigate, toast, Bounce}) {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [passwordInputType, setPasswordInputType] = useState('password');
+    const [passwordFocus, setPasswordFocus] = useState(false);
     const [formError, setFormError] = useState('');
     const [isSubmitActive, setIsSubmitActive] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -41,12 +47,20 @@ export default function SignUp ({navigate}) {
         )
 
         if (signUpAuthError) {
+            toast.error(`${signUpAuthError}`, {
+                position: "top-center",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                transition: Bounce,
+            });
             setIsLoading(false);
-            setFormError(`There has been an error: ${signUpAuthError}`);
             return;
         };
-
-        setFormError('');
 
         // navigate to the home page after the user has been signed in
         navigate('/signup/verify', { replace: true });
@@ -65,10 +79,18 @@ export default function SignUp ({navigate}) {
         });
 
         if (error) {
-            setFormError(`There was an error: ${error}`);
+            toast.error(`${error}`, {
+                position: "top-center",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                transition: Bounce,
+            });
         };
-
-        setFormError('');
     };
 
     function handleNameChange (e) {
@@ -133,54 +155,110 @@ export default function SignUp ({navigate}) {
     }, [firstName, lastName, email, password]);
 
     return (
-        <div>
-            <h1>Sign Up</h1>
-            <form onSubmit={handleSubmit}>
-                <label htmlFor="firstName">First Name</label>
-                <input type="text" id="firstName" placeholder="First Name" value={firstName}
-                    onChange={handleNameChange}
-                />
-                {!firstNameOnlyLetters && <p>First name should only contain letters</p>}
+        <div className="signUpOuterContainer">
+            <div className="signUpInnerContainer">
+                <h1 className="signUpTitle titleFont">Activents</h1>
+                <h2 className="signUpSubHeading">Sign Up</h2>
+                <form className="signUpForm" onSubmit={handleSubmit}>
+                    <div className="signUpFormInputContainer">
+                        <input
+                            className="signUpFormInput"
+                            type="text"
+                            id="firstName"
+                            placeholder="First Name"
+                            value={firstName}
+                            onChange={handleNameChange}
+                        />
+                        <div className={`nameReqContainer ${firstNameOnlyLetters ? '' : 'nameReqContainerInvalid'}`}>
+                            <p className="nameReq">First name should only contain letters!</p>
+                        </div>
+                    </div>
 
-                <label htmlFor="lastName">Last Name</label>
-                <input type="text" id="lastName" placeholder="Last Name" value={lastName}
-                    onChange={handleNameChange}
-                />
-                {!lastNameOnlyLetters && <p>Last name should only contain letters</p>}
+                    <div className="signUpFormInputContainer">
+                        <input
+                            className="signUpFormInput"
+                            type="text"
+                            id="lastName"
+                            placeholder="Last Name"
+                            value={lastName}
+                            onChange={handleNameChange}
+                        />
+                        <div className={`nameReqContainer ${lastNameOnlyLetters ? '' : 'nameReqContainerInvalid'}`}>
+                            <p className='nameReq'>Last name should only contain letters!</p>
+                        </div>
+                    </div>
 
-                <label htmlFor="email">Email</label>
-                <input type="email" id="email" placeholder="Email" value={email}
-                    onChange={e => setEmail(e.target.value)}
-                />
+                    <div className="signUpFormInputContainer">
+                        <input
+                            className="signUpFormInput"
+                            type="email"
+                            id="email"
+                            placeholder="Email"
+                            value={email}
+                            onChange={e => setEmail(e.target.value)}
+                        />
+                    </div>
 
-                <label htmlFor="password">Password</label>
-                <input type="password" id="password" placeholder="Password" value={password}
-                    onChange={e => handlePasswordChange(e)}
-                />
-                <input type="checkbox" onClick={() => {
-                    const pass = document.getElementById('password');
-                    if (pass.type === 'password') pass.type = 'text';
-                    else if (pass.type == 'text') pass.type = 'password';
-                }} />Show Password
-                <div>
-                    <h2>Password Must:</h2>
-                    <ul>
-                        <li className={`passwordReq ${meetsRequiredLength ? 'validReq' : 'invalidReq'}`}>Be at least 8 characters long</li>
-                        <li className={`passwordReq ${containsNumber ? 'validReq' : 'invalidReq'}`}>Contain a number</li>
-                        <li className={`passwordReq ${containsLowerCase ? 'validReq' : 'invalidReq'}`}>Contain a lower case character</li>
-                        <li className={`passwordReq ${containsUpperCase ? 'validReq' : 'invalidReq'}`}>Contain an upper case character</li>
-                        <li className={`passwordReq ${containsSpecialCharacter ? 'validReq' : 'invalidReq'}`}>Contain a special character</li>
-                    </ul>
+                    <div className="signUpFormInputContainer">
+                        <input
+                            className="signUpFormInput"
+                            type={passwordInputType}
+                            id="password"
+                            placeholder="Password"
+                            value={password}
+                            onChange={e => handlePasswordChange(e)}
+                            onFocus={() => setPasswordFocus(true)}
+                            onBlur={() => setPasswordFocus(false)}
+                        />
+                        <FontAwesomeIcon
+                            className="loginPasswordEye"
+                            icon={
+                                passwordInputType === 'password' ? faEyeSlash : faEye
+                            }
+                            onClick={() => {
+                                if (passwordInputType === 'password') setPasswordInputType('text')
+                                else setPasswordInputType('password');
+                            }}
+                        />
+                    </div>
+
+                    <div className={`signUpPasswordReqsContainer ${passwordFocus ? 'signUpPasswordReqsContainerFocus' : ''}`}>
+                        <h3 className="signUpReqsHeading">Password Must:</h3>
+                        <ul className="signUpReqsList">
+                            <li className={`passwordReq ${meetsRequiredLength ? 'validReq' : 'invalidReq'}`}>Be at least 8 characters long</li>
+                            <li className={`passwordReq ${containsNumber ? 'validReq' : 'invalidReq'}`}>Contain a number</li>
+                            <li className={`passwordReq ${containsLowerCase ? 'validReq' : 'invalidReq'}`}>Contain a lower case character</li>
+                            <li className={`passwordReq ${containsUpperCase ? 'validReq' : 'invalidReq'}`}>Contain an upper case character</li>
+                            <li className={`passwordReq ${containsSpecialCharacter ? 'validReq' : 'invalidReq'}`}>Contain a special character</li>
+                        </ul>
+                    </div>
+
+                    <button
+                        className={`signUpButton ${isSubmitActive && !isLoading ? 'signUpButtonAbled' : 'signUpButtonDisabled'}`}
+                        disabled={!isSubmitActive || isLoading}
+                    >
+                        {
+                            isLoading
+                            ?
+                            <FontAwesomeIcon icon={faSpinner} className="signUpSpinner spinner" />
+                            :
+                            'Sign Up'
+                        }
+                    </button>
+                </form>
+
+                <div className="loginDivider">
+                    <div className="loginDividerLine" />
+                    <h3 className="loginDividerText">Or</h3>
+                    <div className="loginDividerLine" />
                 </div>
 
-                <button disabled={!isSubmitActive}>Sign Up</button>
-            </form>
+                <button onClick={handleGoogleClick} className="loginGoogleButton">
+                    Sign up with Google
+                </button>
 
-            <div>OR</div>
-            <button onClick={handleGoogleClick}>Sign in with Google</button>
-
-            {formError && <p>{formError}</p>}
-            {isLoading && <p>Loading...</p>}
+                <p className="loginRedirectText">Already have an account? Sign in <Link to={'/login'}>here</Link></p>
+            </div>
         </div>
     )
 }
