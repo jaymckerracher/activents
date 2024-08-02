@@ -166,11 +166,13 @@ button {
   font-size: 1.3em;
   font-weight: 400;
   margin: 20px 0 25px 0;
-  transition: transform 300ms, filter 300ms;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 0px 0px;
+  transition: transform 300ms, filter 300ms, box-shadow 300ms;
 }
 
 .loginButtonAbled:hover {
   transform: scale(1.1);
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }
 
 .loginButtonDisabled {
@@ -308,12 +310,14 @@ button {
   height: 50px;
   font-size: 1.3em;
   font-weight: 400;
-  transition: transform 300ms, filter 300ms;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 0px 0px;
+  transition: transform 300ms, filter 300ms, box-shadow 300ms;
   margin: 20px 0;
 }
 
 .signUpButtonAbled:hover {
   transform: scale(1.1);
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }
 
 .signUpButtonDisabled {
@@ -378,5 +382,31 @@ button {
   font-size: 0.85em;
   text-align: center;
 }
+
+/* verify - page 4 */
+.verifyContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.verifyTitle {
+  font-size: 5em;
+  margin-bottom: 50px;
+}
+
+.verifySubHeading {
+  font-size: 2em;
+  margin-bottom: 50px;
+}
+
+.verifyText {
+  font-size: 1.25em;
+}
+
+/* navigation - component 1 */
+
 
 /* mobile break point */
