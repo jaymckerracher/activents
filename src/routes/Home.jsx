@@ -2,9 +2,8 @@ import supabase from "../supabase";
 import { useEffect, useState } from "react";
 import Navigation from "../components/Navigation";
 import EventCard from "../components/EventCard";
-import { AuthInvalidCredentialsError } from "@supabase/supabase-js";
 
-export default function Home({navigate, checkValidSession, isSessionValid, setIsSessionValid}) {
+export default function Home({navigate, checkValidSession, isSessionValid, setIsSessionValid, toast, Bounce}) {
   const [checkBeenComplete, setCheckBeenComplete] = useState(false);
   const [currentUser, setCurrentUser] = useState();
   const [currentProfile, setCurrentProfile] = useState();
@@ -224,8 +223,8 @@ export default function Home({navigate, checkValidSession, isSessionValid, setIs
 
   return (
     <div>
-      <Navigation />
-      <h1>Home</h1>
+      <Navigation toast={toast} Bounce={Bounce} />
+      <h1 style={{marginTop: '100px'}}>Home</h1>
       {/* filter */}
       <div>
         <h2>Filter</h2>

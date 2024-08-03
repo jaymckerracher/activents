@@ -407,6 +407,113 @@ button {
 }
 
 /* navigation - component 1 */
+.navOuterContainer {
+  width: 100%;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #007bff;
+  position: fixed;
+  top: 0;
+}
 
+.navInnerContainer {
+  width: 90%;
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navTitle {
+  font-size: 3em;
+  color: #fcfcfc;
+  cursor: pointer;
+}
+
+.navOptionsContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 15px;
+  border-radius: 15px;
+  border: none;
+  background-color: #007bff;
+  color: #fcfcfc;
+  font-size: 1.2em;
+  font-weight: 400;
+  text-wrap: nowrap;
+  transition: background-color 200ms, color 200ms;
+}
+
+.navButton:hover {
+  background-color: #fcfcfc;
+  color: #007bff;
+}
+
+.navButton * {
+  font-size: 1.5em;
+  margin-right: 10px;
+  transition: color 300ms;
+  * {
+    color: #fcfcfc;
+  }
+}
+
+.navButton:hover * {
+  * {
+    color: #007bff;
+  }
+}
+
+/* profile - page 5 */
+.profileOuterContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.profileInnerContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  padding: 40px;
+  border-radius: 20px;
+  width: 500px;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+
+.profileHeader {
+  width: 500px;
+  height: 80px;
+  position: absolute;
+  top: 0;
+  background-color: #007bff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.profileHeader * {
+  font-size: 3em;
+  * {
+    color: #fcfcfc;
+  }
+}
+
+.profileBody {
+  margin-top: 80px;
+}
 
 /* mobile break point */

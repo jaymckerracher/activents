@@ -53,7 +53,7 @@ export default function App() {
         {/* Routes that require an active session */}
         <Route
           path='/'
-          element={isSessionValid ? <Home navigate={navigate} checkValidSession={checkValidSession} isSessionValid={isSessionValid} setIsSessionValid={setIsSessionValid}/> : <Navigate to="/welcome" />}
+          element={isSessionValid ? <Home navigate={navigate} checkValidSession={checkValidSession} isSessionValid={isSessionValid} setIsSessionValid={setIsSessionValid} toast={toast} Bounce={Bounce}/> : <Navigate to="/welcome" />}
         >
         </Route>
 

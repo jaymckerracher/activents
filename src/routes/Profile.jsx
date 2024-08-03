@@ -2,7 +2,7 @@ import supabase from "../supabase";
 import Navigation from "../components/Navigation";
 import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
+import { faPenToSquare, faTrashCan, faCircleUser } from '@fortawesome/free-solid-svg-icons';
 
 export default function Profile({navigate, checkValidSession, isSessionValid, setIsSessionValid}) {
     const [isLoading, setIsLoading] = useState(false);
@@ -86,25 +86,32 @@ export default function Profile({navigate, checkValidSession, isSessionValid, se
     };
 
     return (
-        <div>
+        <div className="profileOuterContainer">
             <Navigation />
-
-            <h2>Profile Information</h2>
+            <div className="profileInnerContainer">
+                <div className="profileHeader">
+                    <FontAwesomeIcon icon={faCircleUser} />
+                </div>
+                <div className="profileBody">
+                    <h2>Hi, {profileObject.first_name}!</h2>
+                </div>
+            </div>
+            {/* <h2>Profile Information</h2>
             <p>Forename: {profileObject.first_name}</p><FontAwesomeIcon icon={faPenToSquare} />
             <p>Surname: {profileObject.last_name}</p><FontAwesomeIcon icon={faPenToSquare} />
             <p>Email: {userObject.email}</p><FontAwesomeIcon icon={faPenToSquare} />
-            <p>Role: {profileObject.role}</p>
+            <p>Role: {profileObject.role}</p> */}
             
-            <h2>Account Actions</h2>
-            {!linkedWithGoogle && <button onClick={handleGoogleClick}>Link with Google</button>}
+            {/* <h2>Account Actions</h2> */}
+            {/* {!linkedWithGoogle && <button onClick={handleGoogleClick}>Link with Google</button>} */}
 
             {/* sign out button */}
-            <button onClick={handleSignOut}>Sign Out</button>
+            {/* <button onClick={handleSignOut}>Sign Out</button> */}
 
             {/* delete account button */}
-            <button>Delete Account</button>
+            {/* <button>Delete Account</button> */}
 
-            { isLoading && <p>Loading...</p> }
+            {/* { isLoading && <p>Loading...</p> } */}
         </div>
     )
 };
