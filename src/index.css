@@ -447,7 +447,7 @@ button {
   border: none;
   background-color: #007bff;
   color: #fcfcfc;
-  font-size: 1.2em;
+  font-size: 1em;
   font-weight: 400;
   text-wrap: nowrap;
   transition: background-color 200ms, color 200ms;
@@ -459,7 +459,7 @@ button {
 }
 
 .navButton * {
-  font-size: 1.5em;
+  font-size: 1.3em;
   margin-right: 10px;
   transition: color 300ms;
   * {
@@ -484,21 +484,22 @@ button {
 .profileInnerContainer {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
   position: relative;
   overflow: hidden;
   padding: 40px;
   border-radius: 20px;
-  width: 500px;
+  width: 600px;
   box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }
 
 .profileHeader {
-  width: 500px;
+  width: 600px;
   height: 80px;
   position: absolute;
   top: 0;
+  right: 0;
+  left: 0;
   background-color: #007bff;
   display: flex;
   justify-content: center;
@@ -514,6 +515,115 @@ button {
 
 .profileBody {
   margin-top: 80px;
+}
+
+.profileHeading {
+  font-size: 2em;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.profileSubHeading {
+  font-size: 1em;
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.profileUserInfoContainer {
+  width: 60%;
+  display: flex;
+  overflow: visible;
+  margin: 20px 0;
+}
+
+.profileUserInfoHeading {
+  min-width: 100px;
+  width: 100px;
+  font-weight: 600;
+}
+
+/* .profileUserInfoContent {
+
+} */
+
+.profileButtons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 80%;
+  margin-top: 50px;
+}
+
+.profileButton {
+  border-radius: 100%;
+  height: 60px;
+  width: 60px;
+  border: none;
+  background-color: #007bff;
+  transition: transform 300ms;
+}
+
+.profileButton:hover {
+  transform: scale(1.1);
+}
+
+.profileButtonIcon {
+  font-size: 1.5em;
+  * {
+    color: #fcfcfc;
+  }
+}
+
+.profileButtonSignOut {
+  border-radius: 100%;
+  height: 60px;
+  width: 60px;
+  border: solid #007bff 2px;
+  background-color: #fcfcfc;
+  transition: transform 300ms;
+}
+
+.profileButtonSignOut:hover {
+  transform: scale(1.1);
+}
+
+.profileButtonIconSignOut {
+  font-size: 1.5em;
+  * {
+    color: #007bff;
+  }
+}
+
+.profileButtonDelete {
+  border-radius: 100%;
+  height: 60px;
+  width: 60px;
+  border: none;
+  background-color: #ff0033;
+  transition: transform 300ms;
+}
+
+.profileButtonDelete:hover {
+  transform: scale(1.1);
+}
+
+.profileButtonIconDelete {
+  font-size: 1.5em;
+  * {
+    color: #fcfcfc;
+  }
+}
+
+.profileButtonMessageContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 40px;
+  margin-top: 30px;
+}
+
+.profileButtonMessage {
+  text-align: center;
 }
 
 /* mobile break point */

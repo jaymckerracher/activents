@@ -380,7 +380,7 @@ export default function Home({navigate, checkValidSession, isSessionValid, setIs
 
       {/* if staff or admin: add event button */}
       {
-        currentProfile.role === 'staff' || currentProfile.role === 'admin' &&
+        (currentProfile.role === 'staff' || currentProfile.role === 'admin') &&
         <button onClick={() => navigate('/addevent')}>Add Event</button>
       }
 
