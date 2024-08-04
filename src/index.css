@@ -414,7 +414,7 @@ button {
   justify-content: center;
   align-items: center;
   background-color: #007bff;
-  position: fixed;
+  position: sticky;
   top: 0;
 }
 
@@ -625,5 +625,170 @@ button {
 .profileButtonMessage {
   text-align: center;
 }
+
+/* home - page 6 */
+.homeOuterContainer {
+  width: 100%;
+}
+
+.homeInnerContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.homeWelcome {
+  margin: 50px 0 10px 0;
+}
+
+.homeWelcomeMessage {
+  text-align: center;
+  font-size: 1.3em;
+
+}
+
+.homeTitle {
+  text-align: center;
+  font-size: 7em;
+}
+
+.homeEventControls {
+  position: sticky;
+  top: 100px;
+  display: flex;
+  justify-content: space-evenly;
+  background: #fcfcfc;
+  /* border-bottom: solid 1px #202020; */
+  width: 60%;
+  padding: 20px 0;
+  margin-bottom: 50px;
+}
+
+.homeAddEventButton {
+  background: linear-gradient(to top left, #0BAB64, #3BB78F);
+  color: #fcfcfc;
+  border-radius: 7px;
+  border: none;
+  font-size: 1em;
+  font-weight: 500;
+  margin-top: 20px;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 0px 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 15px;
+  height: 45px;
+  transition: transform 300ms, filter 300ms, box-shadow 300ms;
+}
+
+.homeAddEventButton * {
+  font-size: 1.2em;
+  margin-right: 10px;
+  * {
+    color: #fcfcfc;
+  }
+}
+
+.homeAddEventButton:hover {
+  transform: scale(1.1);
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+
+.homeControlContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.homeControlsHeading {
+  font-size: 1em;
+  margin-left: 10px;
+  height: 20px;
+}
+
+.homeControlsSelectA {
+  background-color: #007bff;
+  color: white;
+  margin-bottom: 1px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  font-size: 1em;
+  padding: 5px;
+  width: 250px;
+  appearance: none;
+  cursor: pointer;
+  text-align: center;
+  transition: border-bottom-right-radius 300ms, border-bottom-left-radius 300ms;
+}
+
+.homeControlsSelectAChosen {
+  border-bottom-right-radius: 0px;
+  border-bottom-left-radius: 0px;
+}
+
+.homeControlsSubA {
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 300ms;
+}
+
+.homeControlsSubShowA {
+  z-index: 1;
+  opacity: 100;
+}
+
+.homeControlsSubOption {
+  background-color: #007bff;
+  color: white;
+  margin-top: 1px;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  font-size: 1em;
+  padding: 5px;
+  width: 250px;
+  appearance: none;
+  cursor: pointer;
+  text-align: center;
+}
+
+.homeControlsSelectB {
+  background-color: #007bff;
+  color: white;
+  margin-bottom: 1px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 0px;
+  font-size: 1em;
+  padding: 5px;
+  width: 250px;
+  appearance: none;
+  cursor: pointer;
+  text-align: center;
+  transition: border-bottom-right-radius 300ms, border-bottom-left-radius 300ms;
+}
+
+.homeControlsSubmit {
+  background-color: #007bff;
+  color: #fcfcfc;
+  border-radius: 700px;
+  border: none;
+  font-size: 1em;
+  margin-top: 20px;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 0px 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 15px;
+  height: 45px;
+  transition: transform 300ms, filter 300ms, box-shadow 300ms;
+}
+
+.homeControlsSubmit:hover {
+  transform: scale(1.1);
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+
 
 /* mobile break point */

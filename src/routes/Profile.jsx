@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faTrashCan, faCircleUser, faArrowRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 import { faGoogle } from "@fortawesome/free-brands-svg-icons";
 
-export default function Profile({navigate, checkValidSession, isSessionValid, setIsSessionValid}) {
+export default function Profile({navigate, checkValidSession, isSessionValid, setIsSessionValid, toast, Bounce}) {
     const [isLoading, setIsLoading] = useState(false);
     const [userInfoError, setUserInfoError] = useState('');
     const [userObject, setUserObject] = useState();
@@ -89,7 +89,7 @@ export default function Profile({navigate, checkValidSession, isSessionValid, se
 
     return (
         <div className="profileOuterContainer">
-            <Navigation />
+            <Navigation toast={toast} Bounce={Bounce} />
             <div className="profileInnerContainer">
                 <div className="profileHeader">
                     <FontAwesomeIcon icon={faCircleUser} />

@@ -59,7 +59,7 @@ export default function App() {
 
         <Route
           path='/profile'
-          element={isSessionValid ? <Profile navigate={navigate} checkValidSession={checkValidSession} isSessionValid={isSessionValid} setIsSessionValid={setIsSessionValid}/> : <Navigate to="/welcome" />}
+          element={isSessionValid ? <Profile navigate={navigate} checkValidSession={checkValidSession} isSessionValid={isSessionValid} setIsSessionValid={setIsSessionValid} toast={toast} Bounce={Bounce} /> : <Navigate to="/welcome" />}
         >
         </Route>
 
