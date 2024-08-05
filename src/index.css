@@ -416,6 +416,7 @@ button {
   background-color: #007bff;
   position: sticky;
   top: 0;
+  z-index: 100;
 }
 
 .navInnerContainer {
@@ -548,10 +549,6 @@ button {
   font-weight: 600;
 }
 
-/* .profileUserInfoContent {
-
-} */
-
 .profileButtons {
   display: flex;
   justify-content: space-between;
@@ -632,6 +629,93 @@ button {
   text-align: center;
 }
 
+.myEvents {
+  margin-top: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.profileEventCard {
+  width: 50%;
+  height: 300px;
+  overflow: hidden;
+  margin: 30px 0;
+  position: relative;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+
+.profileEventImg {
+  filter: blur(4px);
+  width: 100%;
+}
+
+.profileEventDetails {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background-color: rgba(32, 32, 32, 0.85);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.profileEventDetail {
+  color: #fcfcfc;
+  width: 100%;
+  text-align: center;
+  margin: 10px 0;
+}
+
+.profileCancelButton {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  font-size: 1.3em;
+  font-weight: 400;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 0px 0px;
+  transition: transform 300ms, filter 300ms, box-shadow 300ms;
+  padding: 10px;
+  margin-top: 20px;
+}
+
+.profileEditButton {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  font-size: 1.3em;
+  font-weight: 400;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 0px 0px;
+  transition: transform 300ms, filter 300ms, box-shadow 300ms;
+  padding: 10px;
+  margin-top: 20px;
+}
+
+.profileDeleteButton {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  font-size: 1.3em;
+  font-weight: 400;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 0px 0px;
+  transition: transform 300ms, filter 300ms, box-shadow 300ms;
+  padding: 10px;
+  margin-top: 20px;
+}
+
+.profileCancelButton:hover {
+  transform: scale(1.1);
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+
 /* home - page 6 */
 .homeOuterContainer {
   width: 100%;
@@ -684,6 +768,7 @@ button {
   justify-content: center;
   padding: 0 15px;
   height: 45px;
+  width: 250px;
   transition: transform 300ms, filter 300ms, box-shadow 300ms;
 }
 
@@ -795,6 +880,7 @@ button {
   justify-content: center;
   padding: 0 15px;
   height: 45px;
+  width: 250px;
   transition: transform 300ms, filter 300ms, box-shadow 300ms;
 }
 

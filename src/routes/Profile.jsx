@@ -6,17 +6,28 @@ import { faPenToSquare, faTrashCan, faCircleUser, faArrowRightFromBracket } from
 import { faGoogle } from "@fortawesome/free-brands-svg-icons";
 import DeletePopup from "../components/DeletePopup";
 import { Link } from "react-router-dom";
+import defaultEventImg from '../assets/defaultEventImg.jpg'
 
 export default function Profile({navigate, checkValidSession, isSessionValid, setIsSessionValid, toast, Bounce}) {
     const [isLoading, setIsLoading] = useState(false);
+    const [userSession, setUserSession] = useState();
     const [userInfoError, setUserInfoError] = useState('');
     const [userObject, setUserObject] = useState();
     const [profileObject, setProfileObject] = useState();
+    const [userBookings, setUserBookings] = useState();
     const [userEvents, setUserEvents] = useState([]);
     const [linkedWithGoogle, setLinkedWithGoogle] = useState(null);
     const [buttonErrorMessage, setButtonErrorMessage] = useState('');
     const [buttonMessage, setButtonMessage] = useState('');
     const [deleteClicked, setDeleteClicked] = useState(false);
+
+    function formatDate(date) {
+        const shortenedDate = date.slice(0, 16);
+        const splitDate = shortenedDate.split('T');
+        const firstHalfArr = splitDate[0].split('-');
+        const formattedFirstHalf = `${firstHalfArr[2]}/${firstHalfArr[1]}/${firstHalfArr[0]}`;
+        return `${formattedFirstHalf} at ${splitDate[1]}`;
+    };
 
     async function handleSignOut () {
         setIsLoading(true);
@@ -54,6 +65,18 @@ export default function Profile({navigate, checkValidSession, isSessionValid, se
             await setIsSessionValid(await checkValidSession());
             if (!isSessionValid) navigate('/welcome', { replace: true } );
         };
+
+        async function getUserSession () {
+            const { data: { session }, error} = await supabase.auth.getSession();
+
+            if (error) {
+                console.log(error)
+                return;
+            }
+
+            setUserSession(session)
+        };
+
         async function appointUserInfo() {
             const { data: { user }, error } = await supabase.auth.getUser()
 
@@ -66,7 +89,7 @@ export default function Profile({navigate, checkValidSession, isSessionValid, se
             setLinkedWithGoogle(user.identities.some(identity => identity.provider === 'google'));
             setUserObject(user);
             
-            const {data, error: profileError} = await supabase
+            const {data: profile, error: profileError} = await supabase
             .from('profiles')
             .select()
             .eq('id', user.id);
@@ -76,39 +99,78 @@ export default function Profile({navigate, checkValidSession, isSessionValid, se
                 return;
             }
 
-            setProfileObject(data[0]);
+            setProfileObject(profile[0]);
             setUserInfoError('');
 
             // get the bookings of the user
-            const { data: bookings, error: bookingsError } = await supabase
-            .from('bookings')
-            .select()
-            .eq('user_id', user.id)
+            if (profile[0].role === 'user') {
+                const { data: bookings, error: bookingsError } = await supabase
+                .from('bookings')
+                .select()
+                .eq('user_id', user.id)
+    
+                if (bookingsError) {
+                    console.log(bookingsError)
+                    return
+                }
+    
+                const eventIDs = bookings.map(booking => booking.event_id);
+    
+                const { data: events, error: eventsError } = await supabase
+                .from('events')
+                .select()
+                .in('id', eventIDs)
+    
+                if (eventsError) {
+                    console.log(eventsError)
+                    return
+                }
+    
+                setUserEvents(events);
+            } else {
+                const { data: events, error: eventsError } = await supabase
+                .from('events')
+                .select()
+                .eq('host_id', user.id)
 
-            if (bookingsError) {
-                console.log(bookingsError)
-                return
+                if (eventsError) {
+                    console.log(eventsError);
+                    return;
+                }
+
+                setUserEvents(events);
             }
-
-            const eventIDs = bookings.map(booking => booking.event_id);
-
-            const { data: events, error: eventsError } = await supabase
-            .from('events')
-            .select()
-            .in('id', eventIDs)
-
-            if (eventsError) {
-                console.log(eventsError)
-                return
-            }
-
-            setUserEvents(events);
         };
-        appointUserInfo();
-        assignSessionBool();
-    }, []);
 
-    if (isSessionValid === null || !userObject || !profileObject || !userEvents) {
+        appointUserInfo();
+        getUserSession();
+        assignSessionBool();
+    }, [userEvents]);
+
+    async function handleCancelBooking (id) {
+        const { error } = await supabase
+        .from('bookings')
+        .delete()
+        .eq('user_id', userObject.id)
+        .eq('event_id', id)
+
+        if (error) {
+            console.log(error)
+            return;
+        }
+
+        setUserEvents(userEvents.filter(event => event_id !== id))
+    };
+
+    async function handleEditEvent () {
+        
+    }
+
+    async function handleDeleteEvent () {
+
+    }
+
+    if (isSessionValid === null || !userSession || !userObject || !profileObject || !userEvents) {
         return <p>Loading...</p>
     }
 
@@ -187,6 +249,7 @@ export default function Profile({navigate, checkValidSession, isSessionValid, se
             </div>
 
             <div className="myEvents">
+                <h2>My Events:</h2>
                 {
                     !userEvents.length && profileObject.role !== 'user' &&
                     <p>You haven't created any events yet!</p>
@@ -194,6 +257,33 @@ export default function Profile({navigate, checkValidSession, isSessionValid, se
                 {
                     !userEvents.length && profileObject.role === 'user' &&
                     <p>You haven't signed up to any events yet, sign up <Link to={'/'}>here!</Link></p>
+                }
+                {
+                    userEvents.length > 0 && userEvents.map(event => {
+                        return (
+                            <div key={event.id} className="profileEventCard">
+                                <img className="profileEventImg" src={event.image_url ? event.image_url : defaultEventImg} alt="" />
+                                <div className="profileEventDetails">
+                                    <h1 className="profileEventDetail profileEventTitle">{event.title}</h1>
+                                    <h2 className="profileEventDetail profileEventSport">{event.sport}</h2>
+                                    <h3 className="profileEventDetail profileEventLocation">{event.location}</h3>
+                                    <h3 className="profileEventDetail profileEventDate">{`${formatDate(event.event_start)} - ${formatDate(event.event_end)}`}</h3>
+                                    {
+                                        profileObject.role === 'user' &&
+                                        <button className="profileCancelButton" onClick={() => handleCancelBooking(event.id)}>Cancel Booking</button>
+                                    }
+                                    {
+                                        profileObject.role !== 'user' && 
+                                        <button className="profileEditButton" onClick={handleEditEvent}>Edit Event</button>
+                                    }
+                                    {
+                                        profileObject.role !== 'user' && 
+                                        <button className="profileDeleteButton" onClick={handleDeleteEvent}>Delete Event</button>
+                                    }
+                                </div>
+                            </div>
+                        )
+                    })
                 }
             </div>
             <DeletePopup type={'user'} title={'Warning!'} message={'You are about to delete your account, are you sure?'} userID={userObject.id} setDeleteClicked={setDeleteClicked} deleteClicked={deleteClicked}/>
