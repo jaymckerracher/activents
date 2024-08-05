@@ -56,7 +56,7 @@ export default function Home({navigate, checkValidSession, isSessionValid, setIs
       const {data: { user }, error: authError} = await supabase.auth.getUser();
 
       if (authError) {
-        setErrorMessage('There was an error loading your user details, please try again.');
+        console.log(authError)
         return;
       }
 
@@ -70,7 +70,17 @@ export default function Home({navigate, checkValidSession, isSessionValid, setIs
       .eq('id', user.id)
 
       if (profileError) {
-        setErrorMessage('There was an error loading your profile details, please try again.');
+        toast.error(`${profileError}`, {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+      });
         return;
       };
 
@@ -83,7 +93,17 @@ export default function Home({navigate, checkValidSession, isSessionValid, setIs
       .eq('user_id', user.id);
 
       if (bookingsError) {
-          setErrorMessage(`There was an error retrieving your bookings ${bookingsError}`);
+        toast.error(`${bookingsError}`, {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+      });
           return;
       };
 
@@ -110,7 +130,17 @@ export default function Home({navigate, checkValidSession, isSessionValid, setIs
       .order(sortTopic, { ascending: sortAscending })
 
       if (error) {
-        setErrorMessage('There was an error recieving the events, please try again.');
+        toast.error(`${error}`, {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+      });
         return;
       }
 
@@ -154,7 +184,17 @@ export default function Home({navigate, checkValidSession, isSessionValid, setIs
       .order(sortTopic, { ascending: ascendingBool })
   
       if (error) {
-        setErrorMessage(`There was an issue updating the results, please try again: ${error}`);
+        toast.error(`${error}`, {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+      });
         setLoading(false);
         return;
       }
@@ -170,7 +210,17 @@ export default function Home({navigate, checkValidSession, isSessionValid, setIs
       .order(sortTopic, { ascending: ascendingBool })
   
       if (error) {
-        setErrorMessage(`There was an issue updating the results, please try again: ${error}`);
+        toast.error(`${error}`, {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+      });
         setLoading(false);
         return;
       }
@@ -191,7 +241,17 @@ export default function Home({navigate, checkValidSession, isSessionValid, setIs
     .order(sortTopic , { ascending: ascendingBool })
 
     if (error) {
-      setErrorMessage(`There was an issue updating the results, please try again: ${error}`);
+      toast.error(`${error}`, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+    });
       setLoading(false);
       return;
     }
@@ -210,7 +270,17 @@ export default function Home({navigate, checkValidSession, isSessionValid, setIs
     .order(sortTopic, { ascending: ascendingBool })
 
     if (error) {
-      setErrorMessage('There was an error recieving the events, please try again.');
+      toast.error(`${error}`, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+    });
       setLoading(false);
       return;
     }

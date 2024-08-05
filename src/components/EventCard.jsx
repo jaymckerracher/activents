@@ -3,6 +3,7 @@ import defaultEventImg from '../assets/defaultEventImg.jpg'
 import supabase from '../supabase'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faTrashCan } from '@fortawesome/free-solid-svg-icons';
+import { toast, Bounce } from 'react-toastify';
 
 const googleApiKey = import.meta.env.VITE_GOOGLE_API_KEY;
 
@@ -52,6 +53,21 @@ export default function EventCard({
         setDeleteClicked(true)
     }
 
+    async function handleDeleteBooking (eventID) {
+        await setDeleteType('booking');
+        await setDeleteTitle('Warning!')
+        await setDeleteMessage('Are you sure you want to delete this booking?')
+        await setDeleteIDs({
+            eventID: eventID,
+            userID: currentUser.id
+        })
+        await setAdditionalData({
+            userEvents: eventData,
+            setUserEvents: setEventData,
+        })
+        setDeleteClicked(true)
+    }
+
     useEffect(() => {
         async function getHostInformation() {
             const { data, error } = await supabase
@@ -60,7 +76,17 @@ export default function EventCard({
             .eq('id', event.host_id)
 
             if (error) {
-                setErrorMessage(`There was an error getting the host information, please try again: ${error}`);
+                toast.error(`${error}`, {
+                    position: "top-center",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                    transition: Bounce,
+                });
                 return;
             }
 
@@ -94,6 +120,17 @@ export default function EventCard({
                             setEventInCalendar(true);
                         }
                     } catch (error) {
+                        toast.error(`${error}`, {
+                            position: "top-center",
+                            autoClose: 5000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "light",
+                            transition: Bounce,
+                        });
                         setEventInCalendar(false);
                     }
                 });
@@ -126,7 +163,7 @@ export default function EventCard({
         return `${formattedFirstHalf} at ${splitDate[1]}`;
     };
 
-    async function handleSignUpButton() {
+    async function handleSignUpButton(id) {
         // handle sign up
         if (buttonSignUp) {
             // handle free sign up
@@ -142,7 +179,17 @@ export default function EventCard({
                 });
                 
                 if (error) {
-                    console.log('there was an error signing up to the event...');
+                    toast.error(`${error}`, {
+                        position: "top-center",
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "light",
+                        transition: Bounce,
+                    });
                     return;
                 }
 
@@ -155,18 +202,20 @@ export default function EventCard({
 
         // handle cancel booking
         else if (!buttonSignUp) {
-            // delete the booking from the table
-            setSignUpLoading(true);
+            // // delete the booking from the table
+            // setSignUpLoading(true);
 
-            const { error } = await supabase
-            .from('bookings')
-            .delete()
-            .eq('event_id', event.id)
-            .eq('user_id', currentUser.id)
+            // const { error } = await supabase
+            // .from('bookings')
+            // .delete()
+            // .eq('event_id', event.id)
+            // .eq('user_id', currentUser.id)
 
-            if (error) {
-                return;
-            }
+            // if (error) {
+            //     return;
+            // }
+
+            handleDeleteBooking(id)
 
             // make sure the event is removed from their calendar
             if (eventInCalendar) {
@@ -251,8 +300,8 @@ export default function EventCard({
                 </div>
                 <div className="eventCardCallToActions">
                     {/* calls to action */}
-                    {currentProfile.role === 'user' && <button className='eventButton' onClick={handleSignUpButton} disabled={calendarLoading || signUpLoading}>
-                        {
+                    {currentProfile.role === 'user' && <button className='eventSignUpButton' onClick={() => handleSignUpButton(event.id)} disabled={calendarLoading || signUpLoading}>
+                        {/* {
                             signUpLoading
                             ?
                             'Loading...'
@@ -262,6 +311,17 @@ export default function EventCard({
                             `Sign up for ${event.price === 0 ? 'free' : `£${event.price}`}`
                             :
                             'Cancel booking'
+                        } */}
+                        {
+                            signUpLoading
+                            ?
+                            'Loading...'
+                            :
+                            buttonSignUp
+                            ?
+                            'Sign Up'
+                            :
+                            'Cancel Booking'
                         }
                     </button>}
                     {
@@ -269,7 +329,7 @@ export default function EventCard({
                         currentProfile.role === 'user' &&
                         linkedWithGoogle && gapiLoaded &&
                         !eventInCalendar &&
-                        <button className='eventButton' onClick={handleAddToCalendar} disabled={calendarLoading}>
+                        <button className='eventGoogleButton' onClick={handleAddToCalendar} disabled={calendarLoading}>
                             {
                                 calendarLoading
                                 ?

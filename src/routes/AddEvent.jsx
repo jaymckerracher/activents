@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
 import supabase from "../supabase";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+import Navigation from "../components/Navigation";
+import { toast, Bounce } from 'react-toastify';
 
 export default function AddEvent({navigate, checkValidSession, isSessionValid, setIsSessionValid}) {
     const [currentUser, setCurrentUser] = useState();
@@ -69,7 +73,17 @@ export default function AddEvent({navigate, checkValidSession, isSessionValid, s
         })
 
         if (error) {
-            console.log(error, 'this is the error')
+            toast.error(`${error}`, {
+                position: "top-center",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                transition: Bounce,
+            });
             setSubmitMessage(`There was an error creating the event, please try again: ${error}`);
             setLoading(false);
             return;
@@ -104,7 +118,17 @@ export default function AddEvent({navigate, checkValidSession, isSessionValid, s
             const {data: { user }, error: authError} = await supabase.auth.getUser();
 
             if (authError) {
-                setErrorMessage('There was an error loading your user details, please try again.');
+                toast.error(`${authError}`, {
+                    position: "top-center",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                    transition: Bounce,
+                });
                 return;
             }
 
@@ -117,7 +141,17 @@ export default function AddEvent({navigate, checkValidSession, isSessionValid, s
             .eq('id', user.id)
 
             if (profileError) {
-                setErrorMessage('There was an error loading your profile details, please try again.');
+                toast.error(`${profileError}`, {
+                    position: "top-center",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                    transition: Bounce,
+                });
                 return;
             }
 
@@ -148,46 +182,73 @@ export default function AddEvent({navigate, checkValidSession, isSessionValid, s
     }
 
     return (
-        <div>
-            <h2>Add A New Event</h2>
-            <form onSubmit={handleSubmit}>
-                <label htmlFor="titleInput">Title</label>
-                <input type="text" id="titleInput" value={title} onChange={e => setTitle(e.target.value)} />
+        <div className="addEventOuterContainer">
+            <Navigation toast={toast} Bounce={Bounce} />
+            <div className="addEventInnerContainer">
+                <div className="addEventContainer">
+                    <h2 className="addEventSubHeading">Add A New Event</h2>
+                    <form className="addEventForm" onSubmit={handleSubmit}>
+                        <div className="addEventInputContainer">
+                            <input className="addEventFormInput" placeholder="Title" type="text" id="titleInput" value={title} onChange={e => setTitle(e.target.value)} />
+                        </div>
 
-                <label htmlFor="sportInput">Sport</label>
-                <input type="text" id="sportInput" value={sport} onChange={e => setSport(e.target.value)}/>
+                        <div className="addEventInputContainer">
+                            <input className="addEventFormInput" placeholder="Sport" type="text" id="sportInput" value={sport} onChange={e => setSport(e.target.value)}/>
+                        </div>
 
-                <label htmlFor="descriptionInput">Description</label>
-                <textarea id="descriptionInput" value={description} onChange={e => setDescription(e.target.value)}></textarea>
+                        <div className="addEventInputContainer">
+                            <textarea className="addEventFormInput" placeholder="Description" id="descriptionInput" value={description} onChange={e => setDescription(e.target.value)}></textarea>
+                        </div>
 
-                <label htmlFor="eventStartInput">Event Start</label>
-                <input type="date" id="eventStartInput" min={formattedDate} value={startDate} onChange={(e) => {
-                    setStartDate(e.target.value);
-                    endDate < e.target.value ? setEndDate(e.target.value) : null;
-                }}/>
-                <input type="time" id="eventStartInput" value={startTime} onChange={e => setStartTime(e.target.value)}/>
+                        <div className="addEventInputContainer">
+                            <label htmlFor="eventStartInput">Event Start</label>
+                            <input className="addEventFormInput" type="date" id="eventStartInput" min={formattedDate} value={startDate} onChange={(e) => {
+                                setStartDate(e.target.value);
+                                endDate < e.target.value ? setEndDate(e.target.value) : null;
+                            }}/>
+                            <input className="addEventFormInput" type="time" id="eventStartInput" value={startTime} onChange={e => setStartTime(e.target.value)}/>
+                        </div>
 
-                <label htmlFor="eventEndInput">Event End</label>
-                <input type="date" id="eventEndInput" min={startDate} value={endDate} onChange={e => setEndDate(e.target.value)}/>
-                <input type="time" id="eventEndInput" value={endTime} onChange={e => setEndTime(e.target.value)}/>
+                        <div className="addEventInputContainer">
+                            <label htmlFor="eventEndInput">Event End</label>
+                            <input className="addEventFormInput" type="date" id="eventEndInput" min={startDate} value={endDate} onChange={e => setEndDate(e.target.value)}/>
+                            <input className="addEventFormInput" type="time" id="eventEndInput" value={endTime} onChange={e => setEndTime(e.target.value)}/>
+                        </div>
 
-                <label htmlFor="locationInput">Location</label>
-                <input type="text" id="locationInput" value={location} onChange={e => setLocation(e.target.value)}/>
+                        <div className="addEventInputContainer">
+                            <input className="addEventFormInput" placeholder="Location" type="text" id="locationInput" value={location} onChange={e => setLocation(e.target.value)}/>
+                        </div>
 
-                <label htmlFor="spacesInput">Available Spaces</label>
-                <input type="number" id="spacesInput" min={1} value={spaces} onChange={e => setSpaces(e.target.value)}/>
+                        <div className="addEventInputContainer">
+                            <label htmlFor="spacesInput">Available Spaces</label>
+                            <input className="addEventFormInput" type="number" id="spacesInput" min={1} value={spaces} onChange={e => setSpaces(e.target.value)}/>
+                        </div>
 
-                <label htmlFor="priceInput">Price</label>
-                <input type="number" id="priceInput" min={0} value={pricePounds} onChange={e => setPricePounds(e.target.value)}/>
-                <input type="number" id="priceInput" min={0} max={99} value={pricePennies} onChange={e => setPricePennies(e.target.value)}/>
+                        {/* <div className="addEventInputContainer">
+                            <label htmlFor="priceInput">Price</label>
+                            <input className="addEventFormInput" type="number" id="priceInput" min={0} value={pricePounds} onChange={e => setPricePounds(e.target.value)}/>
+                            <input className="addEventFormInput" type="number" id="priceInput" min={0} max={99} value={pricePennies} onChange={e => setPricePennies(e.target.value)}/>
+                        </div> */}
 
-                <label htmlFor="imageURLInput">Promotional Image URL</label>
-                <input type="text" id="imageURLInput" value={imageURL} onChange={e => setImageURL(e.target.value)}/>
+                        <div className="addEventInputContainer">
+                            <input className="addEventFormInput" placeholder="Image URL" type="text" id="imageURLInput" value={imageURL} onChange={e => setImageURL(e.target.value)}/>
+                        </div>
 
-                <button disabled={!submitButtonActive}>Add Event</button>
-            </form>
-            {loading && <p>Loading...</p>}
-            {submitMessage && <p>{submitMessage}</p>}
+                        <button className={`addEventButton ${submitButtonActive && !loading ? 'addEventButtonAbled' : 'addEventButtonDisabled'}`} disabled={!submitButtonActive}>
+                            {
+                                loading
+                                ?
+                                <FontAwesomeIcon icon={faSpinner} className="signUpSpinner spinner" />
+                                :
+                                'Add Event'
+                            }
+                        </button>
+                    </form>
+                    {loading && <p>Loading...</p>}
+                    {submitMessage && <p>{submitMessage}</p>}
+                </div>
+            </div>
+
         </div>
     )
 }

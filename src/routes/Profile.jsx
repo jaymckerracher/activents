@@ -39,7 +39,17 @@ export default function Profile({navigate, checkValidSession, isSessionValid, se
         setIsLoading(true);
         const { error } = await supabase.auth.signOut();
         if (error) {
-            setButtonErrorMessage(`There was an error logging out: ${error}`);
+            toast.error(`${error}`, {
+                position: "top-center",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                transition: Bounce,
+            });
             return;
         };
         setButtonErrorMessage('');
@@ -60,7 +70,17 @@ export default function Profile({navigate, checkValidSession, isSessionValid, se
         });
 
         if (error) {
-            setButtonErrorMessage(`There was an error: ${error}`);
+            toast.error(`${error}`, {
+                position: "top-center",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                transition: Bounce,
+            });
         };
 
         setButtonErrorMessage('');
@@ -76,7 +96,17 @@ export default function Profile({navigate, checkValidSession, isSessionValid, se
             const { data: { session }, error} = await supabase.auth.getSession();
 
             if (error) {
-                console.log(error)
+                toast.error(`${error}`, {
+                    position: "top-center",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                    transition: Bounce,
+                });
                 return;
             }
 
@@ -87,7 +117,17 @@ export default function Profile({navigate, checkValidSession, isSessionValid, se
             const { data: { user }, error } = await supabase.auth.getUser()
 
             if (error) {
-                setUserInfoError(`There was an error loading your information, please refresh your page: ${error}`);
+                toast.error(`${error}`, {
+                    position: "top-center",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                    transition: Bounce,
+                });
                 return;
             };
 
@@ -101,7 +141,17 @@ export default function Profile({navigate, checkValidSession, isSessionValid, se
             .eq('id', user.id);
             
             if (profileError) {
-                setUserInfoError(`There was an error loading your information, please refresh your page: ${profileError}`);
+                toast.error(`${profileError}`, {
+                    position: "top-center",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                    transition: Bounce,
+                });
                 return;
             }
 
@@ -116,7 +166,17 @@ export default function Profile({navigate, checkValidSession, isSessionValid, se
                 .eq('user_id', user.id)
     
                 if (bookingsError) {
-                    console.log(bookingsError)
+                    toast.error(`${bookingsError}`, {
+                        position: "top-center",
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "light",
+                        transition: Bounce,
+                    });
                     return
                 }
     
@@ -128,7 +188,17 @@ export default function Profile({navigate, checkValidSession, isSessionValid, se
                 .in('id', eventIDs)
     
                 if (eventsError) {
-                    console.log(eventsError)
+                    toast.error(`${eventsError}`, {
+                        position: "top-center",
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "light",
+                        transition: Bounce,
+                    });
                     return
                 }
     

@@ -1,4 +1,5 @@
 import supabase from "../supabase";
+import { toast, Bounce } from "react-toastify";
 
 export default function DeletePopup ({type, title, message, ids, setDeleteClicked, deleteClicked, additionalData}) {
     async function handleDeleteBooking () {
@@ -9,8 +10,17 @@ export default function DeletePopup ({type, title, message, ids, setDeleteClicke
         .eq('event_id', ids.eventID)
 
         if (error) {
-            console.log(error)
-            return;
+            toast.error(`${error}`, {
+                position: "top-center",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                transition: Bounce,
+            });
         }
 
         await additionalData.setUserEvents(additionalData.userEvents.filter(event => event.id !== ids.eventID))
@@ -26,8 +36,17 @@ export default function DeletePopup ({type, title, message, ids, setDeleteClicke
         .eq('id', ids.eventID)
 
         if (error) {
-            console.log(error)
-            return
+            toast.error(`${error}`, {
+                position: "top-center",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                transition: Bounce,
+            });
         }
 
         await additionalData.setUserEvents(additionalData.userEvents.filter(event => event.host_id === ids.userID))

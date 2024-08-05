@@ -137,6 +137,7 @@ button {
   margin: 10px 0;
   padding-bottom: 2px;
   font-size: 1em;
+  background-color: #fcfcfc;
 }
 
 .loginFormInput:focus {
@@ -295,6 +296,7 @@ button {
   margin: 10px 0;
   padding-bottom: 2px;
   font-size: 1em;
+  background-color: #fcfcfc;
 }
 
 .signUpFormInput:focus {
@@ -1102,6 +1104,40 @@ button {
   margin: 20px 0 0 20px;
 }
 
+.eventSignUpButton {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 60px;
+  font-size: 1em;
+  padding: 10px 20px;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 0px 0px;
+  transition: transform 300ms, filter 300ms, box-shadow 300ms;
+  margin: 20px 20px 0 0;
+}
+
+.eventSignUpButton:hover {
+  transform: scale(1.1);
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 8px 24px;
+}
+
+.eventGoogleButton {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 60px;
+  font-size: 1em;
+  padding: 10px 20px;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 0px 0px;
+  transition: transform 300ms, filter 300ms, box-shadow 300ms;
+  margin: 20px 20px 0 0;
+}
+
+.eventGoogleButton:hover {
+  transform: scale(1.1);
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 8px 24px;
+}
+
 .eventEditButton * {
   * {
     color: #fcfcfc;
@@ -1132,6 +1168,90 @@ button {
 
 .eventCardBody {
   margin-bottom: 20px;
+}
+
+.addEventOuterContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.addEventInnerContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 100px 0;
+}
+
+.addEventContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  padding: 40px;
+  border-radius: 20px;
+  width: 600px;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+
+.addEventSubHeading {
+  font-size: 2em;
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.addEventForm {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.addEventInputContainer {
+  width: 90%;
+  position: relative;
+  margin: 20px 0;
+}
+
+.addEventFormInput {
+  width: 100%;
+  border: none;
+  border-bottom: #202020 1px solid;
+  margin: 10px 0;
+  padding-bottom: 2px;
+  font-size: 1em;
+  background-color: #fcfcfc;
+}
+
+.addEventFormInput:focus {
+  outline: none;
+}
+
+.addEventButton {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  width: 50%;
+  height: 50px;
+  font-size: 1.3em;
+  font-weight: 400;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 0px 0px;
+  transition: transform 300ms, filter 300ms, box-shadow 300ms;
+  margin: 20px 0;
+}
+
+.addEventButtonAbled:hover {
+  transform: scale(1.1);
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+
+.addEventButtonDisabled {
+  filter: grayscale(60%) blur(1.5px);
+  cursor: auto;
+  transform: scale(0.95);
 }
 
 /* mobile break point */

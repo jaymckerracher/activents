@@ -53,10 +53,7 @@ export default function Login ({navigate, setIsSessionValid, toast, Bounce}) {
             return;
         }
 
-        console.log(data.user.app_metadata.providers, 'this the is the return data');
-
         if (data.user.app_metadata.providers.includes('google')) {
-            console.log('we are getting here... 0')
             const { error: logOutError } = await supabase.auth.signOut();
 
             if (logOutError) {
