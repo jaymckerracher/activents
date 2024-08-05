@@ -210,7 +210,17 @@ export default function Profile({navigate, checkValidSession, isSessionValid, se
                 .eq('host_id', user.id)
 
                 if (eventsError) {
-                    console.log(eventsError);
+                    toast.error(`${eventsError}`, {
+                        position: "top-center",
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "light",
+                        transition: Bounce,
+                    });
                     return;
                 }
 

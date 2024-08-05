@@ -104,11 +104,19 @@ export default function EditEvent () {
         .select()
 
         if (error) {
-            console.log(error)
+            toast.error(`${error}`, {
+                position: "top-center",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                transition: Bounce,
+            });
             return
         }
-
-        console.log(data, 'this is the data')
 
         setButtonLoading(false);
     }
