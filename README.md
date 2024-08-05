@@ -19,3 +19,6 @@ You will now have the repo on your machine. Unfortunately, to successfully run t
 
 ### If you need more access...
 Please don't hesitate to contact me for more details: jaymckerracher@gmail.com
+
+## Other Details
+The back end for this site was created with supabase, and the site utilises the Google calendar API alongside it.
