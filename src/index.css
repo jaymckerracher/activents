@@ -475,13 +475,19 @@ button {
 
 /* profile - page 5 */
 .profileOuterContainer {
+  width: 100%;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+  flex-direction: column;
 }
 
 .profileInnerContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 100px 0;
+}
+
+.profileContainer {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -671,7 +677,7 @@ button {
   border: none;
   font-size: 1em;
   font-weight: 500;
-  margin-top: 20px;
+  margin-top: 30px;
   box-shadow: rgba(149, 157, 165, 0.2) 0px 0px 0px;
   display: flex;
   align-items: center;
@@ -701,13 +707,17 @@ button {
 
 .homeControlsHeading {
   font-size: 1em;
-  margin-left: 10px;
+  margin: 0 0 10px 30px;
   height: 20px;
+  font-weight: 400;
 }
 
 .homeControlsSelectA {
-  background-color: #007bff;
-  color: white;
+  background-color: #fcfcfc;
+  color: #202020;
+  box-shadow: rgba(150, 150, 150, 0.2) 0px 0px 20px 0px;
+  border: none;
+  font-weight: 400;
   margin-bottom: 1px;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
@@ -734,16 +744,17 @@ button {
 }
 
 .homeControlsSubShowA {
-  z-index: 1;
-  opacity: 100;
+  z-index: 0;
+  opacity: 1;
 }
 
 .homeControlsSubOption {
-  background-color: #007bff;
-  color: white;
+  box-shadow: rgba(150, 150, 150, 0.2) 0px 0px 20px 0px;
+  border: none;
   margin-top: 1px;
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
+  font-weight: 400;
   font-size: 1em;
   padding: 5px;
   width: 250px;
@@ -753,13 +764,14 @@ button {
 }
 
 .homeControlsSelectB {
-  background-color: #007bff;
-  color: white;
+  box-shadow: rgba(150, 150, 150, 0.2) 0px 0px 20px 0px;
+  border: none;
   margin-bottom: 1px;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   border-bottom-left-radius: 0px;
   border-bottom-right-radius: 0px;
+  font-weight: 400;
   font-size: 1em;
   padding: 5px;
   width: 250px;
@@ -772,10 +784,11 @@ button {
 .homeControlsSubmit {
   background-color: #007bff;
   color: #fcfcfc;
+  font-weight: 400;
   border-radius: 700px;
   border: none;
   font-size: 1em;
-  margin-top: 20px;
+  margin-top: 30px;
   box-shadow: rgba(149, 157, 165, 0.2) 0px 0px 0px;
   display: flex;
   align-items: center;
@@ -790,5 +803,67 @@ button {
   box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }
 
+/* delete popup - component 2 */
+.deletePopBackground {
+  position: fixed;
+  width: 100%;
+  height: 100vh;
+  background-color: rgba(32, 32, 32, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 300ms;
+}
+
+.profileDeleteClicked {
+  opacity: 1;
+  z-index: 1;
+}
+
+.profileDeleteNotClicked {
+  opacity: 0;
+  z-index: -1;
+}
+
+.deletePopup {
+  background-color: #fcfcfc;
+  border-radius: 10px;
+  text-align: center;
+  padding: 20px;
+}
+
+.deleteTitle {
+  margin-bottom: 20px;
+}
+
+.deleteMessage {
+  margin-bottom: 20px;
+}
+
+.deletePopupButtons {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.deleteButton {
+  width: 100px;
+  padding: 10px;
+  border-radius: 100px;
+  border: none;
+}
+
+.deleteButtonContinue {
+  background-color: #fcfcfc;
+  border: solid 2px #ff0033;
+  font-weight: 500;
+  color: #ff0033;
+}
+
+.deleteButtonCancel {
+  background-color: #007bff;
+  font-weight: 500;
+  color: #fcfcfc;
+}
 
 /* mobile break point */

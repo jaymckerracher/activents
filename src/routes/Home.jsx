@@ -18,6 +18,7 @@ export default function Home({navigate, checkValidSession, isSessionValid, setIs
   const [errorMessage, setErrorMessage] = useState('');
   const [eventData, setEventData] = useState();
   const [loading, setLoading] = useState(false);
+  const [deleteClicked, setDeleteClicked] = useState(false);
 
   // filter states
   const [filterTopic, setFilterTopic] = useState('');
@@ -285,6 +286,11 @@ export default function Home({navigate, checkValidSession, isSessionValid, setIs
 
             {/* filter arguments drop options (depending on filter topic) */}
             <div className={`homeControlsSubA ${filterTopic ? 'homeControlsSubShowA' : ''}`}>
+              {/* empty filter arguments for styling */}
+              { !filterTopic &&
+                <select id="filterArgs" className="homeControlsSubOption"></select>
+              }
+
               {/* sport filter arguments */}
               {filterTopic === 'sport' &&
                 <select id="filterArgs" className="homeControlsSubOption" onChange={(e) => setFilterArg(e.target.value)}>

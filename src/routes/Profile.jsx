@@ -4,15 +4,19 @@ import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faTrashCan, faCircleUser, faArrowRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 import { faGoogle } from "@fortawesome/free-brands-svg-icons";
+import DeletePopup from "../components/DeletePopup";
+import { Link } from "react-router-dom";
 
 export default function Profile({navigate, checkValidSession, isSessionValid, setIsSessionValid, toast, Bounce}) {
     const [isLoading, setIsLoading] = useState(false);
     const [userInfoError, setUserInfoError] = useState('');
     const [userObject, setUserObject] = useState();
     const [profileObject, setProfileObject] = useState();
+    const [userEvents, setUserEvents] = useState([]);
     const [linkedWithGoogle, setLinkedWithGoogle] = useState(null);
     const [buttonErrorMessage, setButtonErrorMessage] = useState('');
     const [buttonMessage, setButtonMessage] = useState('');
+    const [deleteClicked, setDeleteClicked] = useState(false);
 
     async function handleSignOut () {
         setIsLoading(true);
@@ -74,12 +78,37 @@ export default function Profile({navigate, checkValidSession, isSessionValid, se
 
             setProfileObject(data[0]);
             setUserInfoError('');
+
+            // get the bookings of the user
+            const { data: bookings, error: bookingsError } = await supabase
+            .from('bookings')
+            .select()
+            .eq('user_id', user.id)
+
+            if (bookingsError) {
+                console.log(bookingsError)
+                return
+            }
+
+            const eventIDs = bookings.map(booking => booking.event_id);
+
+            const { data: events, error: eventsError } = await supabase
+            .from('events')
+            .select()
+            .in('id', eventIDs)
+
+            if (eventsError) {
+                console.log(eventsError)
+                return
+            }
+
+            setUserEvents(events);
         };
         appointUserInfo();
         assignSessionBool();
     }, []);
 
-    if (isSessionValid === null || !userObject || !profileObject) {
+    if (isSessionValid === null || !userObject || !profileObject || !userEvents) {
         return <p>Loading...</p>
     }
 
@@ -90,68 +119,84 @@ export default function Profile({navigate, checkValidSession, isSessionValid, se
     return (
         <div className="profileOuterContainer">
             <Navigation toast={toast} Bounce={Bounce} />
+
             <div className="profileInnerContainer">
-                <div className="profileHeader">
-                    <FontAwesomeIcon icon={faCircleUser} />
-                </div>
-                <div className="profileBody">
-                    <h2 className="profileHeading">Hi, {profileObject.first_name}!</h2>
-                    <h3 className="profileSubHeading">Here you can view and make changes to your account.</h3>
-                </div>
-                <div className="profileUserInfoContainer">
-                    <h4 className="profileUserInfoHeading">Name:</h4>
-                    <p className="profileUserInfoContent">{`${profileObject.first_name} ${profileObject.last_name}`}</p>
-                </div>
-                <div className="profileUserInfoContainer">
-                    <h4 className="profileUserInfoHeading">Email:</h4>
-                    <p className="profileUserInfoContent">{userObject.email}</p>
-                </div>
-                <div className="profileUserInfoContainer">
-                    <h4 className="profileUserInfoHeading">Access:</h4>
-                    <p className="profileUserInfoContent">{profileObject.role[0].toUpperCase() + profileObject.role.slice(1)}</p>
-                </div>
-                <div className="profileButtons">
-                    {
-                        !linkedWithGoogle &&
+                <div className="profileContainer">
+                    <div className="profileHeader">
+                        <FontAwesomeIcon icon={faCircleUser} />
+                    </div>
+                    <div className="profileBody">
+                        <h2 className="profileHeading">Hi, {profileObject.first_name}!</h2>
+                        <h3 className="profileSubHeading">Here you can view and make changes to your account.</h3>
+                    </div>
+                    <div className="profileUserInfoContainer">
+                        <h4 className="profileUserInfoHeading">Name:</h4>
+                        <p className="profileUserInfoContent">{`${profileObject.first_name} ${profileObject.last_name}`}</p>
+                    </div>
+                    <div className="profileUserInfoContainer">
+                        <h4 className="profileUserInfoHeading">Email:</h4>
+                        <p className="profileUserInfoContent">{userObject.email}</p>
+                    </div>
+                    <div className="profileUserInfoContainer">
+                        <h4 className="profileUserInfoHeading">Access:</h4>
+                        <p className="profileUserInfoContent">{profileObject.role[0].toUpperCase() + profileObject.role.slice(1)}</p>
+                    </div>
+                    <div className="profileButtons">
+                        {
+                            !linkedWithGoogle &&
+                            <button
+                                className="profileButton"
+                                onClick={handleGoogleClick}
+                                onMouseEnter={() => setButtonMessage('Link Account with Google')}
+                                onMouseLeave={() => setButtonMessage('')}
+                            >
+                                <FontAwesomeIcon className="profileButtonIcon" icon={faGoogle} />
+                            </button>
+                        }
+
                         <button
                             className="profileButton"
-                            onClick={handleGoogleClick}
-                            onMouseEnter={() => setButtonMessage('Link Account with Google')}
+                            onMouseEnter={() => setButtonMessage('Edit Account')}
                             onMouseLeave={() => setButtonMessage('')}
                         >
-                            <FontAwesomeIcon className="profileButtonIcon" icon={faGoogle} />
+                            <FontAwesomeIcon className="profileButtonIcon" icon={faPenToSquare} />
                         </button>
-                    }
 
-                    <button
-                        className="profileButton"
-                        onMouseEnter={() => setButtonMessage('Edit Account')}
-                        onMouseLeave={() => setButtonMessage('')}
-                    >
-                        <FontAwesomeIcon className="profileButtonIcon" icon={faPenToSquare} />
-                    </button>
+                        <button
+                            className="profileButtonSignOut"
+                            onClick={handleSignOut}
+                            onMouseEnter={() => setButtonMessage('Sign Out')}
+                            onMouseLeave={() => setButtonMessage('')}
+                        >
+                            <FontAwesomeIcon className="profileButtonIconSignOut" icon={faArrowRightFromBracket} />
+                        </button>
 
-                    <button
-                        className="profileButtonSignOut"
-                        onClick={handleSignOut}
-                        onMouseEnter={() => setButtonMessage('Sign Out')}
-                        onMouseLeave={() => setButtonMessage('')}
-                    >
-                        <FontAwesomeIcon className="profileButtonIconSignOut" icon={faArrowRightFromBracket} />
-                    </button>
-
-                    <button
-                        className="profileButtonDelete"
-                        onMouseEnter={() => setButtonMessage('Delete Account')}
-                        onMouseLeave={() => setButtonMessage('')}
-                    >
-                        <FontAwesomeIcon className="profileButtonIconDelete" icon={faTrashCan} />
-                    </button>
-                </div>
-                <div className="profileButtonMessageContainer">
-                    <p className="profileButtonMessage">{buttonMessage}</p>
+                        <button
+                            className="profileButtonDelete"
+                            onMouseEnter={() => setButtonMessage('Delete Account')}
+                            onMouseLeave={() => setButtonMessage('')}
+                            onClick={() => setDeleteClicked(true)}
+                        >
+                            <FontAwesomeIcon className="profileButtonIconDelete" icon={faTrashCan}/>
+                        </button>
+                    </div>
+                    <div className="profileButtonMessageContainer">
+                        <p className="profileButtonMessage">{buttonMessage}</p>
+                    </div>
                 </div>
             </div>
+
+            <div className="myEvents">
+                {
+                    !userEvents.length && profileObject.role !== 'user' &&
+                    <p>You haven't created any events yet!</p>
+                }
+                {
+                    !userEvents.length && profileObject.role === 'user' &&
+                    <p>You haven't signed up to any events yet, sign up <Link to={'/'}>here!</Link></p>
+                }
+            </div>
+            <DeletePopup type={'user'} title={'Warning!'} message={'You are about to delete your account, are you sure?'} userID={userObject.id} setDeleteClicked={setDeleteClicked} deleteClicked={deleteClicked}/>
         </div>
     )
 };
