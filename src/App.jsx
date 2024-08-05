@@ -13,6 +13,7 @@ import SignUp from './routes/SignUp';
 import VerifyEmail from './routes/VerifyEmail';
 import Profile from './routes/Profile';
 import AddEvent from './routes/AddEvent';
+import EditEvent from './routes/EditEvent';
 
 export default function App() {
   const navigate = useNavigate();
@@ -66,6 +67,12 @@ export default function App() {
         <Route
           path='/addevent'
           element={isSessionValid ? <AddEvent navigate={navigate} checkValidSession={checkValidSession} isSessionValid={isSessionValid} setIsSessionValid={setIsSessionValid}/> : <Navigate to="/welcome" />}
+        >
+        </Route>
+
+        <Route
+          path='/edit/:id'
+          element={isSessionValid ? <EditEvent /> : <Navigate to="/welcome" />}
         >
         </Route>
 

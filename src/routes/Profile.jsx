@@ -19,7 +19,13 @@ export default function Profile({navigate, checkValidSession, isSessionValid, se
     const [linkedWithGoogle, setLinkedWithGoogle] = useState(null);
     const [buttonErrorMessage, setButtonErrorMessage] = useState('');
     const [buttonMessage, setButtonMessage] = useState('');
+
     const [deleteClicked, setDeleteClicked] = useState(false);
+    const [deleteType, setDeleteType] = useState('');
+    const [deleteTitle, setDeleteTitle] = useState('');
+    const [deleteMessage, setDeleteMessage] = useState('');
+    const [deleteIDs, setDeleteIDs] = useState({});
+    const [additionalData, setAdditionalData] = useState({});
 
     function formatDate(date) {
         const shortenedDate = date.slice(0, 16);
@@ -147,27 +153,38 @@ export default function Profile({navigate, checkValidSession, isSessionValid, se
         assignSessionBool();
     }, [userEvents]);
 
-    async function handleCancelBooking (id) {
-        const { error } = await supabase
-        .from('bookings')
-        .delete()
-        .eq('user_id', userObject.id)
-        .eq('event_id', id)
-
-        if (error) {
-            console.log(error)
-            return;
-        }
-
-        setUserEvents(userEvents.filter(event => event_id !== id))
+    async function handleCancelBooking (eventID) {
+        await setDeleteType('booking');
+        await setDeleteTitle('Warning!');
+        await setDeleteMessage('Are you sure you want to cancel this booking?');
+        await setDeleteIDs({
+            userID: userObject.id,
+            eventID: eventID,
+        });
+        await setAdditionalData({
+            userEvents: userEvents,
+            setUserEvents: setUserEvents,
+        });
+        setDeleteClicked(true);
     };
 
-    async function handleEditEvent () {
-        
+    async function handleEditEvent (id) {
+        navigate(`/edit/${id}`)
     }
 
-    async function handleDeleteEvent () {
-
+    async function handleDeleteEvent (eventID) {
+        await setDeleteType('event');
+        await setDeleteTitle('Warning!')
+        await setDeleteMessage('Are you sure you want to delete this event?')
+        await setDeleteIDs({
+            eventID: eventID,
+            userID: userObject.id
+        })
+        await setAdditionalData({
+            userEvents: userEvents,
+            setUserEvents: setUserEvents,
+        })
+        setDeleteClicked(true)
     }
 
     if (isSessionValid === null || !userSession || !userObject || !profileObject || !userEvents) {
@@ -232,15 +249,6 @@ export default function Profile({navigate, checkValidSession, isSessionValid, se
                         >
                             <FontAwesomeIcon className="profileButtonIconSignOut" icon={faArrowRightFromBracket} />
                         </button>
-
-                        <button
-                            className="profileButtonDelete"
-                            onMouseEnter={() => setButtonMessage('Delete Account')}
-                            onMouseLeave={() => setButtonMessage('')}
-                            onClick={() => setDeleteClicked(true)}
-                        >
-                            <FontAwesomeIcon className="profileButtonIconDelete" icon={faTrashCan}/>
-                        </button>
                     </div>
                     <div className="profileButtonMessageContainer">
                         <p className="profileButtonMessage">{buttonMessage}</p>
@@ -262,7 +270,7 @@ export default function Profile({navigate, checkValidSession, isSessionValid, se
                     userEvents.length > 0 && userEvents.map(event => {
                         return (
                             <div key={event.id} className="profileEventCard">
-                                <img className="profileEventImg" src={event.image_url ? event.image_url : defaultEventImg} alt="" />
+                                <img className="profileEventImg" src={event.image_url ? event.image_url : defaultEventImg} alt={defaultEventImg} />
                                 <div className="profileEventDetails">
                                     <h1 className="profileEventDetail profileEventTitle">{event.title}</h1>
                                     <h2 className="profileEventDetail profileEventSport">{event.sport}</h2>
@@ -272,21 +280,23 @@ export default function Profile({navigate, checkValidSession, isSessionValid, se
                                         profileObject.role === 'user' &&
                                         <button className="profileCancelButton" onClick={() => handleCancelBooking(event.id)}>Cancel Booking</button>
                                     }
-                                    {
-                                        profileObject.role !== 'user' && 
-                                        <button className="profileEditButton" onClick={handleEditEvent}>Edit Event</button>
-                                    }
-                                    {
-                                        profileObject.role !== 'user' && 
-                                        <button className="profileDeleteButton" onClick={handleDeleteEvent}>Delete Event</button>
-                                    }
+                                    <div className="profileNotUserButtons">
+                                        {
+                                            profileObject.role !== 'user' && 
+                                            <button className="profileEditButton" onClick={() => handleEditEvent(event.id)}><FontAwesomeIcon icon={faPenToSquare} /></button>
+                                        }
+                                        {
+                                            profileObject.role !== 'user' && 
+                                            <button className="profileDeleteButton" onClick={() => handleDeleteEvent(event.id)}><FontAwesomeIcon icon={faTrashCan} /></button>
+                                        }
+                                    </div>
                                 </div>
                             </div>
                         )
                     })
                 }
             </div>
-            <DeletePopup type={'user'} title={'Warning!'} message={'You are about to delete your account, are you sure?'} userID={userObject.id} setDeleteClicked={setDeleteClicked} deleteClicked={deleteClicked}/>
+            <DeletePopup type={deleteType} title={deleteTitle} message={deleteMessage} ids={deleteIDs} setDeleteClicked={setDeleteClicked} deleteClicked={deleteClicked} additionalData={additionalData}/>
         </div>
     )
 };
