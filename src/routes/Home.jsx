@@ -4,7 +4,7 @@ import Navigation from "../components/Navigation";
 import EventCard from "../components/EventCard";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCirclePlus } from '@fortawesome/free-solid-svg-icons';
-
+import DeletePopup from "../components/DeletePopup";
 
 export default function Home({navigate, checkValidSession, isSessionValid, setIsSessionValid, toast, Bounce}) {
   const [checkBeenComplete, setCheckBeenComplete] = useState(false);
@@ -18,7 +18,6 @@ export default function Home({navigate, checkValidSession, isSessionValid, setIs
   const [errorMessage, setErrorMessage] = useState('');
   const [eventData, setEventData] = useState();
   const [loading, setLoading] = useState(false);
-  const [deleteClicked, setDeleteClicked] = useState(false);
 
   // filter states
   const [filterTopic, setFilterTopic] = useState('');
@@ -32,6 +31,14 @@ export default function Home({navigate, checkValidSession, isSessionValid, setIs
   const [sortTopic, setSortTopic] = useState('created_at');
   const [sortDirectionLabelOptions, setSortDirectionLabelOptions] = useState(['Newest post', 'Oldest post']);
   const [sortAscending, setSortAscending] = useState(false);
+
+  // delete states
+  const [deleteClicked, setDeleteClicked] = useState(false);
+  const [deleteType, setDeleteType] = useState('');
+  const [deleteTitle, setDeleteTitle] = useState('');
+  const [deleteMessage, setDeleteMessage] = useState('');
+  const [deleteIDs, setDeleteIDs] = useState({});
+  const [additionalData, setAdditionalData] = useState({});
   
   // check session, get user info and all events
   useEffect(() => {
@@ -133,7 +140,7 @@ export default function Home({navigate, checkValidSession, isSessionValid, setIs
     getUserProfileBookings();
     getSession();
     getAllEvents();
-  }, []);
+  }, [eventData]);
 
   // handle update for array filter arguments
   async function handleUpdateResultsNum(topic, arg, sortTopic, ascendingBool) {
@@ -406,16 +413,33 @@ export default function Home({navigate, checkValidSession, isSessionValid, setIs
         </div>
 
         {/* events */}
-        <div>
+        <div className="eventsContainer">
           {loading && <p>Loading events...</p>}
           {
             !loading && 
             eventData.length > 0 &&
-            <div>
-              {eventData.map(event => {
-                return <EventCard key={event.id} event={event} currentUser={currentUser} currentProfile={currentProfile} userBookings={userBookings} userBookingsEvents={userBookingsEvents} currentSession={currentSession} linkedWithGoogle={linkedWithGoogle} />
-              })}
-            </div>
+            eventData.map(event => {
+              return <EventCard
+                key={event.id}
+                event={event}
+                currentUser={currentUser}
+                currentProfile={currentProfile}
+                userBookings={userBookings}
+                userBookingsEvents={userBookingsEvents}
+                currentSession={currentSession}
+                linkedWithGoogle={linkedWithGoogle}
+                setDeleteClicked={setDeleteClicked}
+                deleteClicked={deleteClicked}
+                setDeleteType={setDeleteType}
+                setDeleteTitle={setDeleteTitle}
+                setDeleteMessage={setDeleteMessage}
+                setDeleteIDs={setDeleteIDs}
+                setAdditionalData={setAdditionalData}
+                eventData={eventData}
+                setEventData={setEventData}
+                navigate={navigate}
+              />
+            })
           }
           {
             !loading &&
@@ -423,8 +447,8 @@ export default function Home({navigate, checkValidSession, isSessionValid, setIs
             <p>Sorry, there are no matching results</p>
           }
         </div>
-
       </div>
+      <DeletePopup type={deleteType} title={deleteTitle} message={deleteMessage} ids={deleteIDs} setDeleteClicked={setDeleteClicked} deleteClicked={deleteClicked} additionalData={additionalData}/>
     </div>
   );
 }

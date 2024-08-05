@@ -168,8 +168,8 @@ export default function Profile({navigate, checkValidSession, isSessionValid, se
         setDeleteClicked(true);
     };
 
-    async function handleEditEvent (id) {
-        navigate(`/edit/${id}`)
+    async function handleEditEvent (eventID) {
+        navigate(`/edit/${eventID}`)
     }
 
     async function handleDeleteEvent (eventID) {
@@ -260,11 +260,11 @@ export default function Profile({navigate, checkValidSession, isSessionValid, se
                 <h2>My Events:</h2>
                 {
                     !userEvents.length && profileObject.role !== 'user' &&
-                    <p>You haven't created any events yet!</p>
+                    <p className="eventAltText">You haven't created any events yet, create a new event <Link to={'/addevent'}>here!</Link></p>
                 }
                 {
                     !userEvents.length && profileObject.role === 'user' &&
-                    <p>You haven't signed up to any events yet, sign up <Link to={'/'}>here!</Link></p>
+                    <p className="eventAltText">You haven't signed up to any events yet, sign up <Link to={'/'}>here!</Link></p>
                 }
                 {
                     userEvents.length > 0 && userEvents.map(event => {

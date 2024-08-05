@@ -1,10 +1,29 @@
 import { useEffect, useState } from 'react'
 import defaultEventImg from '../assets/defaultEventImg.jpg'
 import supabase from '../supabase'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPenToSquare, faTrashCan } from '@fortawesome/free-solid-svg-icons';
 
 const googleApiKey = import.meta.env.VITE_GOOGLE_API_KEY;
 
-export default function EventCard({event, currentUser, currentProfile, userBookings, userBookingsEvents, currentSession, linkedWithGoogle}) {
+export default function EventCard({
+    event,
+    currentUser,
+    currentProfile,
+    userBookings,
+    userBookingsEvents,
+    currentSession,
+    linkedWithGoogle,
+    setDeleteClicked,
+    setDeleteType,
+    setDeleteTitle,
+    setDeleteMessage,
+    setDeleteIDs,
+    setAdditionalData,
+    eventData,
+    setEventData,
+    navigate
+}) {
     const [host, setHost] = useState();
     const [errorMessage, setErrorMessage] = useState('');
     const [buttonSignUp, setButtonSignUp] = useState(!userBookingsEvents.includes(event.id));
@@ -13,6 +32,25 @@ export default function EventCard({event, currentUser, currentProfile, userBooki
     const [gapiLoaded, setGapiLoaded] = useState(false);
     const [eventInCalendar, setEventInCalendar] = useState();
     const [calendarID, setCalendarID] = useState();
+
+    async function handleEditEvent (eventID) {
+        navigate(`/edit/${eventID}`)
+    };
+    
+    async function handleDeleteEvent (eventID) {
+        await setDeleteType('event');
+        await setDeleteTitle('Warning!')
+        await setDeleteMessage('Are you sure you want to delete this event?')
+        await setDeleteIDs({
+            eventID: eventID,
+            userID: currentUser.id
+        })
+        await setAdditionalData({
+            userEvents: eventData,
+            setUserEvents: setEventData,
+        })
+        setDeleteClicked(true)
+    }
 
     useEffect(() => {
         async function getHostInformation() {
@@ -183,49 +221,68 @@ export default function EventCard({event, currentUser, currentProfile, userBooki
     }
 
     return (
-        <div style={{border: 'solid black 2px'}}>
-            {/* event information */}
-            <img src={event.image_url ? event.image_url : defaultEventImg} alt="Default event image" style={{width: '200px'}}/>
-            <h2>{event.title}</h2>
-            <h3>{event.sport}</h3>
-            <p>Event posted {formatDate(event.created_at)} by {host.first_name} {host.last_name}</p>
-            <p>{event.description}</p>
-            <p>Hosted at: {event.location}</p>
-            <p>Event begins: {formatDate(event.event_start)}</p>
-            <p>Event ends: {formatDate(event.event_end)}</p>
-            <p>{event.available_spaces} spaces remaining</p>
+        <div className='eventCardOuterContainer'>
+            <h2 className='eventCardTitle'>{event.title}</h2>
+            <p className='eventCardCreatedAt'>Posted {formatDate(event.created_at)} by {host.first_name} {host.last_name}</p>
+            <div className='eventCardContainer'>
+                {/* event information */}
+                <img className='eventCardImg' src={event.image_url ? event.image_url : defaultEventImg} alt="Default event image"/>
+                <div className='eventCardInformation'>
+                    <div className='eventCardInfoContainer'>
+                        <h3 className='eventCardText eventCardHeading'>Sport</h3>
+                        <p className='eventCardText eventCardBody'>{event.sport}</p>
 
-            {/* calls to action */}
-            {currentProfile.role === 'user' && <button onClick={handleSignUpButton} disabled={calendarLoading || signUpLoading}>
-                {
-                    signUpLoading
-                    ?
-                    'Loading...'
-                    :
-                    buttonSignUp
-                    ?
-                    `Sign up for ${event.price === 0 ? 'free' : `£${event.price}`}`
-                    :
-                    'Cancel booking'
-                }
-            </button>}
-            {
-                !buttonSignUp &&
-                currentProfile.role === 'user' &&
-                linkedWithGoogle && gapiLoaded &&
-                !eventInCalendar &&
-                <button onClick={handleAddToCalendar} disabled={calendarLoading}>
+                        <h3 className='eventCardText eventCardHeading'>Location</h3>
+                        <p className='eventCardText eventCardBody'>{event.location}</p>
+
+                        <h3 className='eventCardText eventCardHeading'>Starts</h3>
+                        <p className='eventCardText eventCardBody'>{formatDate(event.event_start)}</p>
+
+                        <h3 className='eventCardText eventCardHeading'>Ends</h3>
+                        <p className='eventCardText eventCardBody'>Event ends: {formatDate(event.event_end)}</p>
+
+                        <h3 className='eventCardText eventCardHeading'>Available Spaces</h3>
+                        <p className='eventCardText eventCardBody'>{event.available_spaces} spaces remaining</p>
+                    </div>
+                    <div className='eventCardDescriptionContainer'>
+                        <h3 className='eventCardText eventCardHeading'>Description</h3>
+                        <p className='eventCardText eventCardBody'>{event.description}</p>
+                    </div>
+                </div>
+                <div className="eventCardCallToActions">
+                    {/* calls to action */}
+                    {currentProfile.role === 'user' && <button className='eventButton' onClick={handleSignUpButton} disabled={calendarLoading || signUpLoading}>
+                        {
+                            signUpLoading
+                            ?
+                            'Loading...'
+                            :
+                            buttonSignUp
+                            ?
+                            `Sign up for ${event.price === 0 ? 'free' : `£${event.price}`}`
+                            :
+                            'Cancel booking'
+                        }
+                    </button>}
                     {
-                        calendarLoading
-                        ?
-                        'Loading...'
-                        :
-                        'Add to google calendar'
+                        !buttonSignUp &&
+                        currentProfile.role === 'user' &&
+                        linkedWithGoogle && gapiLoaded &&
+                        !eventInCalendar &&
+                        <button className='eventButton' onClick={handleAddToCalendar} disabled={calendarLoading}>
+                            {
+                                calendarLoading
+                                ?
+                                'Loading...'
+                                :
+                                'Add to google calendar'
+                            }
+                        </button>
                     }
-                </button>
-            }
-            {((currentProfile.role === 'staff' && currentProfile.id === event.host_id) || currentProfile.role === 'admin') && <button>Edit event</button>}
-            {((currentProfile.role === 'staff' && currentProfile.id === event.host_id) || currentProfile.role === 'admin') && <button>Delete event</button>}
+                    {((currentProfile.role === 'staff' && currentProfile.id === event.host_id) || currentProfile.role === 'admin') && <button className='eventEditButton' onClick={() => handleEditEvent(event.id)}><FontAwesomeIcon icon={faPenToSquare} /></button>}
+                    {((currentProfile.role === 'staff' && currentProfile.id === event.host_id) || currentProfile.role === 'admin') && <button className='eventDeleteButton' onClick={() => handleDeleteEvent(event.id)}><FontAwesomeIcon icon={faTrashCan} /></button>}
+                </div>
+            </div>
         </div>
     )
 }

@@ -192,7 +192,7 @@ button {
 .loginDividerLine {
   height: 0.5px;
   width: 100%;
-  background-color: black;
+  background-color: #202020;
 }
 
 .loginDividerText {
@@ -553,7 +553,7 @@ button {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 60%;
+  width: 40%;
   margin-top: 50px;
 }
 
@@ -630,7 +630,7 @@ button {
 }
 
 .myEvents {
-  margin-top: 50px;
+  margin: 50px 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -638,7 +638,6 @@ button {
 
 .profileEventCard {
   width: 50%;
-  /* height: 300px; */
   overflow: hidden;
   margin: 30px 0;
   position: relative;
@@ -673,6 +672,10 @@ button {
   width: 100%;
   text-align: center;
   margin: 10px 0;
+}
+
+.eventAltText {
+  margin-top: 20px;
 }
 
 .profileCancelButton {
@@ -785,6 +788,7 @@ button {
   width: 60%;
   padding: 20px 0;
   margin-bottom: 50px;
+  z-index: 100;
 }
 
 .homeAddEventButton {
@@ -925,6 +929,8 @@ button {
 /* delete popup - component 2 */
 .deletePopBackground {
   position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100vh;
   background-color: rgba(32, 32, 32, 0.3);
@@ -936,7 +942,7 @@ button {
 
 .profileDeleteClicked {
   opacity: 1;
-  z-index: 1;
+  z-index: 100;
 }
 
 .profileDeleteNotClicked {
@@ -983,6 +989,149 @@ button {
   background-color: #007bff;
   font-weight: 500;
   color: #fcfcfc;
+}
+
+/* event card - component 3 */
+.eventsContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.eventCardOuterContainer {
+  margin-bottom: 100px;
+  margin-top: 50px;
+  width: 40%;
+}
+
+.eventCardContainer {
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  background-color: rgba(32, 32, 32, 0.85);
+}
+
+.eventCardInformation {
+  display: flex;
+  width: 100%;
+}
+
+.eventCardInfoContainer {
+  display: flex;
+  flex-direction: column;
+  text-wrap: pretty;
+  width: 50%;
+}
+
+.eventCardDescriptionContainer {
+  width: 50%;
+}
+
+.eventCardText {
+  color: #fcfcfc;
+}
+
+.eventCardCallToActions {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.eventCardImg {
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  filter: blur(4px);
+}
+
+.eventCardHeadings {
+  display: flex;
+  align-items: center;
+}
+
+.eventCardTitle {
+  font-size: 2.5em;
+  font-weight: 500;
+  margin-left: 70px;
+  margin-bottom: 10px;
+}
+
+.eventCardCreatedAt {
+  margin-left: 70px;
+  font-size: 1.1em;
+  margin-bottom: 20px;
+  font-weight: 400;
+}
+
+.eventEditButton {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 50px;
+  font-size: 1.3em;
+  font-weight: 400;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 0px 0px;
+  transition: transform 300ms, filter 300ms, box-shadow 300ms;
+  width: 50px;
+  height: 50px;
+  margin: 20px 20px 0 0;
+}
+
+.eventDeleteButton {
+  background-color: #ff0033;
+  color: white;
+  border: none;
+  border-radius: 50px;
+  font-size: 1.3em;
+  font-weight: 400;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 0px 0px;
+  transition: transform 300ms, filter 300ms, box-shadow 300ms;
+  width: 50px;
+  height: 50px;
+  margin: 20px 0 0 20px;
+}
+
+.eventEditButton * {
+  * {
+    color: #fcfcfc;
+  }
+}
+
+.eventEditButton:hover {
+  transform: scale(1.1);
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 8px 24px;
+}
+
+.eventDeleteButton:hover {
+  transform: scale(1.1);
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 8px 24px;
+}
+
+.eventDeleteButton * {
+  * {
+    color: #fcfcfc;
+  }
+}
+
+.eventCardHeading {
+  font-weight: 600;
+  font-size: 1em;
+  margin-bottom: 5px;
+}
+
+.eventCardBody {
+  margin-bottom: 20px;
 }
 
 /* mobile break point */
