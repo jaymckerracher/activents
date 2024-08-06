@@ -127,6 +127,7 @@ export default function Home({navigate, checkValidSession, isSessionValid, setIs
       const {data, error} = await supabase
       .from('events')
       .select()
+      .gt('available_spaces', 0)
       .order(sortTopic, { ascending: sortAscending })
 
       if (error) {
@@ -291,9 +292,7 @@ export default function Home({navigate, checkValidSession, isSessionValid, setIs
   }
 
   if (isSessionValid === null || !checkBeenComplete || !currentUser || !currentProfile || !currentSession || !userBookings || !userBookingsEvents || !eventData) {
-    return (
-      <p>Loading...</p>
-    )
+    return <p>Loading...</p>
   }
 
   else if (errorMessage) {
@@ -518,7 +517,7 @@ export default function Home({navigate, checkValidSession, isSessionValid, setIs
           }
         </div>
       </div>
-      <DeletePopup type={deleteType} title={deleteTitle} message={deleteMessage} ids={deleteIDs} setDeleteClicked={setDeleteClicked} deleteClicked={deleteClicked} additionalData={additionalData}/>
+      <DeletePopup type={deleteType} title={deleteTitle} message={deleteMessage} ids={deleteIDs} setDeleteClicked={setDeleteClicked} deleteClicked={deleteClicked} additionalData={additionalData} />
     </div>
   );
 }

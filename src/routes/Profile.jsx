@@ -26,6 +26,7 @@ export default function Profile({navigate, checkValidSession, isSessionValid, se
     const [deleteMessage, setDeleteMessage] = useState('');
     const [deleteIDs, setDeleteIDs] = useState({});
     const [additionalData, setAdditionalData] = useState({});
+    const [deleteConfirmed, setDeleteConfirmed] = useState(false);
 
     function formatDate(date) {
         const shortenedDate = date.slice(0, 16);
@@ -39,17 +40,7 @@ export default function Profile({navigate, checkValidSession, isSessionValid, se
         setIsLoading(true);
         const { error } = await supabase.auth.signOut();
         if (error) {
-            toast.error(`${error}`, {
-                position: "top-center",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "light",
-                transition: Bounce,
-            });
+            console.log(error)
             return;
         };
         setButtonErrorMessage('');
@@ -233,19 +224,50 @@ export default function Profile({navigate, checkValidSession, isSessionValid, se
         assignSessionBool();
     }, [userEvents]);
 
-    async function handleCancelBooking (eventID) {
-        await setDeleteType('booking');
-        await setDeleteTitle('Warning!');
-        await setDeleteMessage('Are you sure you want to cancel this booking?');
-        await setDeleteIDs({
-            userID: userObject.id,
-            eventID: eventID,
-        });
-        await setAdditionalData({
-            userEvents: userEvents,
-            setUserEvents: setUserEvents,
-        });
-        setDeleteClicked(true);
+    async function handleCancelBooking (event) {
+        // delete the booking
+        const { error: bookingError } = await supabase
+        .from('bookings')
+        .delete()
+        .eq('user_id', userObject.id)
+        .eq('event_id', event.id)
+
+        if (bookingError) {
+            console.log('this is the error?', bookingError)
+            toast.error(`${bookingError}`, {
+                position: "top-center",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                transition: Bounce,
+            });
+        };
+
+        // add one to the spaces
+        const { error } = await supabase
+        .from('events')
+        .update({
+            available_spaces: event.available_spaces + 1,
+        })
+        .eq('id', event.id)
+
+        if (error) {
+            toast.error(`${error}`, {
+                position: "top-center",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                transition: Bounce,
+            });
+        }
     };
 
     async function handleEditEvent (eventID) {
@@ -363,7 +385,7 @@ export default function Profile({navigate, checkValidSession, isSessionValid, se
                                     <h3 className="profileEventDetail profileEventDate">{`${formatDate(event.event_start)} - ${formatDate(event.event_end)}`}</h3>
                                     {
                                         profileObject.role === 'user' &&
-                                        <button className="profileCancelButton" onClick={() => handleCancelBooking(event.id)}>Cancel Booking</button>
+                                        <button className="profileCancelButton" onClick={() => handleCancelBooking(event)}>Cancel Booking</button>
                                     }
                                     <div className="profileNotUserButtons">
                                         {

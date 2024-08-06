@@ -23,7 +23,7 @@ export default function EventCard({
     setAdditionalData,
     eventData,
     setEventData,
-    navigate
+    navigate,
 }) {
     const [host, setHost] = useState();
     const [errorMessage, setErrorMessage] = useState('');
@@ -42,21 +42,6 @@ export default function EventCard({
         await setDeleteType('event');
         await setDeleteTitle('Warning!')
         await setDeleteMessage('Are you sure you want to delete this event?')
-        await setDeleteIDs({
-            eventID: eventID,
-            userID: currentUser.id
-        })
-        await setAdditionalData({
-            userEvents: eventData,
-            setUserEvents: setEventData,
-        })
-        setDeleteClicked(true)
-    }
-
-    async function handleDeleteBooking (eventID) {
-        await setDeleteType('booking');
-        await setDeleteTitle('Warning!')
-        await setDeleteMessage('Are you sure you want to delete this booking?')
         await setDeleteIDs({
             eventID: eventID,
             userID: currentUser.id
@@ -167,7 +152,7 @@ export default function EventCard({
         // handle sign up
         if (buttonSignUp) {
             // handle free sign up
-            if (event.price === 0) {
+            // if (event.price === 0) {
                 // adds the booking to the bookings table
                 setSignUpLoading(true);
                 const { error } = await supabase
@@ -193,29 +178,81 @@ export default function EventCard({
                     return;
                 }
 
-                setButtonSignUp(false);
-                setSignUpLoading(false);
-            }
+                const { error: spacesError } = await supabase
+                .from('events')
+                .update({
+                    available_spaces: event.available_spaces - 1,
+                })
+                .eq('id', event.id)
+
+                if (spacesError) {
+                    toast.error(`${error}`, {
+                        position: "top-center",
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "light",
+                        transition: Bounce,
+                    });
+                    return;
+                }
+
+                await setButtonSignUp(false);
+                await setSignUpLoading(false);
+            // }
 
             // handle paid sign up
         }
 
         // handle cancel booking
         else if (!buttonSignUp) {
-            // // delete the booking from the table
-            // setSignUpLoading(true);
+            setSignUpLoading(true);
 
-            // const { error } = await supabase
-            // .from('bookings')
-            // .delete()
-            // .eq('event_id', event.id)
-            // .eq('user_id', currentUser.id)
+            const { error: bookingError } = await supabase
+            .from('bookings')
+            .delete()
+            .eq('user_id', currentUser.id)
+            .eq('event_id', event.id)
 
-            // if (error) {
-            //     return;
-            // }
+            if (bookingError) {
+                console.log('this is the error?', bookingError)
+                toast.error(`${bookingError}`, {
+                    position: "top-center",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                    transition: Bounce,
+                });
+            };
 
-            handleDeleteBooking(id)
+            // add one to the available spaces
+            const { error } = await supabase
+            .from('events')
+            .update({
+                available_spaces: event.available_spaces + 1,
+            })
+            .eq('id', event.id)
+
+            if (error) {
+                toast.error(`${error}`, {
+                    position: "top-center",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                    transition: Bounce,
+                });
+            }
 
             // make sure the event is removed from their calendar
             if (eventInCalendar) {
@@ -226,9 +263,8 @@ export default function EventCard({
                 setEventInCalendar(false);
             }
 
-            // make sure any money is returned
-            setButtonSignUp(true);
-            setSignUpLoading(false);
+            await setButtonSignUp(true);
+            await setSignUpLoading(false);
         }
     }
 
@@ -324,6 +360,7 @@ export default function EventCard({
                             'Cancel Booking'
                         }
                     </button>}
+
                     {
                         !buttonSignUp &&
                         currentProfile.role === 'user' &&
