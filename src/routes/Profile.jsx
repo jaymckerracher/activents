@@ -252,6 +252,10 @@ export default function Profile({navigate, checkValidSession, isSessionValid, se
         navigate(`/edit/${eventID}`)
     }
 
+    async function handleEditProfile (profileID) {
+        navigate(`/profile/edit/${profileID}`)
+    }
+
     async function handleDeleteEvent (eventID) {
         await setDeleteType('event');
         await setDeleteTitle('Warning!')
@@ -317,6 +321,7 @@ export default function Profile({navigate, checkValidSession, isSessionValid, se
                             className="profileButton"
                             onMouseEnter={() => setButtonMessage('Edit Account')}
                             onMouseLeave={() => setButtonMessage('')}
+                            onClick={() => handleEditProfile(profileObject.id)}
                         >
                             <FontAwesomeIcon className="profileButtonIcon" icon={faPenToSquare} />
                         </button>

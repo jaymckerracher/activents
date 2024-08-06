@@ -1,10 +1,9 @@
 import { useParams } from 'react-router-dom';
 import supabase from '../supabase';
 import { useEffect, useState } from 'react';
-import { toast, Bounce } from 'react-toastify';
 import Navigation from '../components/Navigation';
 
-export default function EditEvent () {
+export default function EditEvent ({navigate, toast, Bounce}) {
     const { id } = useParams();
     const [loading, setLoading] = useState(false);
     const [buttonLoading, setButtonLoading] = useState(false);
@@ -119,6 +118,7 @@ export default function EditEvent () {
         }
 
         setButtonLoading(false);
+        navigate('/');
     }
 
     if (loading) {

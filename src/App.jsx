@@ -14,6 +14,7 @@ import VerifyEmail from './routes/VerifyEmail';
 import Profile from './routes/Profile';
 import AddEvent from './routes/AddEvent';
 import EditEvent from './routes/EditEvent';
+import EditProfile from './routes/EditProfile';
 
 export default function App() {
   const navigate = useNavigate();
@@ -72,7 +73,13 @@ export default function App() {
 
         <Route
           path='/edit/:id'
-          element={isSessionValid ? <EditEvent /> : <Navigate to="/welcome" />}
+          element={isSessionValid ? <EditEvent navigate={navigate} toast={toast} Bounce={Bounce} /> : <Navigate to="/welcome" />}
+        >
+        </Route>
+
+        <Route
+          path='/profile/edit/:id'
+          element={isSessionValid ? <EditProfile navigate={navigate} toast={toast} Bounce={Bounce} /> : <Navigate to="/welcome" />}
         >
         </Route>
 

@@ -1254,4 +1254,95 @@ button {
   transform: scale(0.95);
 }
 
+/* edit profile page */
+.editProfileOuterContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.editProfileInnerContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.editProfileContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  padding: 40px;
+  border-radius: 20px;
+  width: 400px;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+
+.editProfileTitle {
+  font-size: 2em;
+  text-align: center;
+}
+
+.editProfileTagLine {
+  font-size: 1em;
+  margin: 20px 0;
+  text-align: center;
+}
+
+.editProfileForm {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.editProfileInputContainer {
+  width: 90%;
+  position: relative;
+  margin: 20px 0;
+}
+
+.editProfileInput {
+  width: 100%;
+  border: none;
+  border-bottom: #202020 1px solid;
+  margin: 10px 0;
+  padding-bottom: 2px;
+  font-size: 1em;
+  background-color: #fcfcfc;
+}
+
+.editProfileInput:focus {
+  outline: none;
+}
+
+.editProfileButton {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  width: 50%;
+  height: 50px;
+  font-size: 1.3em;
+  font-weight: 400;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 0px 0px;
+  transition: transform 300ms, filter 300ms, box-shadow 300ms;
+  margin: 20px 0;
+}
+
+.editProfileButtonAbled:hover {
+  transform: scale(1.1);
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+
+.editProfileButtonDisabled {
+  filter: grayscale(60%) blur(1.5px);
+  cursor: auto;
+  transform: scale(0.95);
+}
+
 /* mobile break point */
