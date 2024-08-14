@@ -1,6 +1,7 @@
 # Activents Launchpad Project
 
 ## Link to the hosted version
+https://activents.netlify.app/
 
 ## Summary
 Activents is an events platform that allows staff members to create sporting events for their community. Staff members, alongside those with admin access, are allowed to create events that can be seen and interacted with by normal users of the site.
